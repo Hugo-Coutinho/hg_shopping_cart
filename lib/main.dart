@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hg_shopping_cart/pages/home/data/data_sources/icon_remote_data_source.dart';
 
-void main() => runApp(MyApp());
+import 'package:http/http.dart' as http;
+
+//void main() => runApp(MyApp());
+
+void main() async {
+  final IconRemoteDataSource datasource = IconRemoteDataSourceImpl(http.Client());
+  final icons = await datasource.getIcons();
+  if (icons.asMap().length > 0) {
+    print("yeeep");
+  } else {
+    print("something wrong");
+  }
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
