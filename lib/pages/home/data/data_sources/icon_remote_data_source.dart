@@ -14,21 +14,21 @@ class IconRemoteDataSourceImpl extends IconRemoteDataSource {
 
   @override
   Future<List<IconModel>> getIcons() async {
-    final response = await this.getIconsResponse();
-    final jsonIcons = response.statusCode == 200 ? this.getIconsJsonData(response) : List<dynamic>();
-    return getIconModelsByJson(jsonIcons);
+    final response = await _getIconsResponse();
+    final jsonIcons = response.statusCode == 200 ? _getIconsJsonData(response) : List<dynamic>();
+    return _getIconModelsByJson(jsonIcons);
   }
 
-  List<IconModel> getIconModelsByJson(List<dynamic> jsonData) {
+  List<IconModel> _getIconModelsByJson(List<dynamic> jsonData) {
     return jsonData.map((element) => IconModel.fromJson(element)).toList();
   }
 
-  List<dynamic> getIconsJsonData(http.Response response) {
+  List<dynamic> _getIconsJsonData(http.Response response) {
       return List<dynamic>.from(json.decode(response.body)['data']);
   }
 
-  Future<http.Response> getIconsResponse() {
+  Future<http.Response> _getIconsResponse() {
     return http.get(Uri.encodeFull(Constant.getIconsUrl),
-        headers: {Constant.authorization: Constant.bearerToken});
+        headers: {Constant.authorization: Constant.token});
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hg_shopping_cart/core/api/generate_token.dart';
 import 'package:hg_shopping_cart/pages/home/data/data_sources/icon_remote_data_source.dart';
 
 import 'package:http/http.dart' as http;
@@ -6,13 +7,20 @@ import 'package:http/http.dart' as http;
 //void main() => runApp(MyApp());
 
 void main() async {
-  final IconRemoteDataSource datasource = IconRemoteDataSourceImpl(http.Client());
-  final icons = await datasource.getIcons();
-  if (icons.asMap().length > 0) {
-    print("yeeep");
-  } else {
-    print("something wrong");
-  }
+  _didApplicationLoad().whenComplete(() async {
+    final IconRemoteDataSource datasource = IconRemoteDataSourceImpl(http.Client());
+    final icons = await datasource.getIcons();
+    if (icons.asMap().length > 0) {
+      print("yeeep");
+    } else {
+      print("something wrong");
+    }
+  });
+}
+
+Future<void> _didApplicationLoad() async {
+  final GenerateToken generateToken = GenerateTokenImpl(http.Client());
+  return await generateToken.syncToken();
 }
 
 class MyApp extends StatelessWidget {
