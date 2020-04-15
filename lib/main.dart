@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hg_shopping_cart/core/api/generate_token.dart';
-import 'package:hg_shopping_cart/pages/home/data/data_sources/icon_remote_data_source.dart';
+import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
+import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
 
-import 'package:http/http.dart' as http;
 
 //void main() => runApp(MyApp());
 
 void main() async {
+  setupLocator();
   _didApplicationLoad().whenComplete(() async {
-    final IconRemoteDataSource datasource = IconRemoteDataSourceImpl(http.Client());
-    final icons = await datasource.getIcons();
+    final HomeRepository homeRepository = locator<HomeRepository>();
+    final icons = await homeRepository.getIcons();
     if (icons.asMap().length > 0) {
       print("yeeep");
     } else {
@@ -19,7 +20,7 @@ void main() async {
 }
 
 Future<void> _didApplicationLoad() async {
-  final GenerateToken generateToken = GenerateTokenImpl(http.Client());
+  final GenerateToken generateToken = locator<GenerateToken>();
   return await generateToken.syncToken();
 }
 

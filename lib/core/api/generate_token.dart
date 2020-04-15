@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:hg_shopping_cart/core/util/constant/Constant.dart';
+import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:http/http.dart' as http;
 
 abstract class GenerateToken {
