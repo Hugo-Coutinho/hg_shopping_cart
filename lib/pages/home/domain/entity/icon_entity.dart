@@ -1,15 +1,14 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
-class IconEntity extends Equatable {
-  final String name;
-  final String url;
+class IconEntity extends HiveObject {
+  String name;
+  String url;
+  int amount;
 
   IconEntity({
     @required this.name,
     @required this.url,
+    @required this.amount,
   });
-
-  @override
-  List<Object> get props => [this.name, this.url];
 }

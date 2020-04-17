@@ -1,4 +1,4 @@
-import 'package:hg_shopping_cart/pages/home/data/data_sources/icon_remote_data_source.dart';
+import 'package:hg_shopping_cart/core/api/data_sources/icon_remote_data_source.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 
 abstract class HomeRepository {

@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:hg_shopping_cart/core/api/data_sources/icon_local_data_source.dart';
 import 'package:hg_shopping_cart/core/api/generate_token.dart';
 import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
+import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
-
 
 //void main() => runApp(MyApp());
 
 void main() async {
-  setupLocator();
-  _didApplicationLoad().whenComplete(() async {
-    final HomeRepository homeRepository = locator<HomeRepository>();
-    final icons = await homeRepository.getIcons();
-    if (icons.asMap().length > 0) {
-      print("yeeep");
-    } else {
-      print("something wrong");
-    }
-  });
+  _didApplicationLoad();
 }
 
 Future<void> _didApplicationLoad() async {
+  setupLocator();
+  _setupRemoteApiAccess().whenComplete(() async {
+    final IconLocalDataSource boxManager = locator<IconLocalDataSource>();
+    final HomeRepository homeRepository = locator<HomeRepository>();
+    final icons = await homeRepository.getIcons();
+    if (icons.asMap().length > 0) {
+      boxManager.add([icons[0], icons[1], icons[3], icons[4]]);
+      boxManager.add([icons[10]]);
+      final IconModel iconIndex3 = boxManager.findById(icons[3].url);
+      print(iconIndex3.name);
+      boxManager.add([icons[10]]);
+      boxManager.add([icons[10]]);
+      boxManager.delete(icons[10]);
+      boxManager.delete(icons[1]);
+      print("finished");
+      final IconModel test = boxManager.findById(icons[80].url);
+      print(test);
+      }
+  });
+}
+
+Future<void> _setupRemoteApiAccess() async {
   final GenerateToken generateToken = locator<GenerateToken>();
   return await generateToken.syncToken();
 }

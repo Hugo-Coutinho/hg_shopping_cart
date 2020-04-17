@@ -1,4 +1,5 @@
 class Constant {
+  // API
   static String token =  "";
   static final String authorization = "Authorization";
   static final String bearer = "Bearer ";
@@ -8,4 +9,7 @@ class Constant {
   static final String apiParametersCategoryId = "categoryId=1";
   static final String apiParametersColor = "color=2";
   static final String getIconsUrl = baseUrl + "/items/icons?" + apiParametersCategoryId + "&" + apiParametersColor;
+
+  // BOX
+  static final String box = "icons";
 }

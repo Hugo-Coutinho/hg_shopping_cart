@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hg_shopping_cart/pages/home/data/data_sources/icon_remote_data_source.dart';
+import 'package:hg_shopping_cart/core/api/data_sources/icon_remote_data_source.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import '../../../../fixtures/get_icons.dart';
 import 'package:mockito/mockito.dart';
@@ -28,12 +28,10 @@ void main() {
 
   test(
     'should return icons when the response code is 200 (success)',
-    () {
+        () {
       // arrange
       setUpMockHttpClientSuccess200();
-      final modelExpected = IconModel(
-          url: 'https://image.flaticon.com/icons/png/512/174/174848.png',
-          name: 'Facebook');
+      final modelExpected = IconModel(url: 'https://image.flaticon.com/icons/png/512/174/174848.png', name: 'Facebook',amount: 1);
 
       // act
       dataSource.getIcons().then((result) {
