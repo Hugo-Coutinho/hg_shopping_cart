@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hg_shopping_cart/core/api/data_sources/icon_remote_data_source.dart';
+import 'package:hg_shopping_cart/core/data/data_sources/icon_remote_data_source.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import '../../../../fixtures/get_icons.dart';
 import 'package:mockito/mockito.dart';

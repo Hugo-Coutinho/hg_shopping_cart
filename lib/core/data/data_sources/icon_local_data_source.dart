@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hg_shopping_cart/core/error/exception.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 abstract class IconLocalDataSource {
-  void add(List<IconModel> icons);
+  Future<void> add(List<IconModel> icons);
   IconModel findById(String url);
   List<IconModel> findAll();
   void delete(IconModel item);
@@ -22,19 +23,19 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
     _hiveInitialize();
   }
 
-  void _hiveInitialize() async {
-    final appDocumentDirectory =
-        await path_provider.getApplicationDocumentsDirectory();
+  _hiveInitialize() async {
+    final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
     Hive.init(appDocumentDirectory.path);
     this.box = await Hive.openBox(boxName);
   }
 
   @override
-  void add(List<IconModel> icons) {
-    icons.forEach((currentItem) {
+  Future<void> add(List<IconModel> icons) {
+    icons.forEach((currentItem) async {
       final IconModel itemFromBox = box.get(currentItem.url);
-      itemFromBox != null ? _incrementAmount(currentItem) : _insertItem(currentItem);
+      itemFromBox != null ? _incrementAmount(currentItem) : await _insertItem(currentItem);
     });
+    return Future.value();
   }
 
   @override
@@ -45,7 +46,7 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
 
   @override
   IconModel findById(String url) {
-    return box.values.toList().firstWhere((currentItem) => currentItem.url == url, orElse: () => null);
+    return box.values.toList().firstWhere((currentItem) => currentItem.url == url, orElse: () => throw CacheException());
   }
 
   @override
@@ -81,7 +82,8 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
   item.delete();
   }
 
-  void _insertItem(IconModel item) {
+  Future<void> _insertItem(IconModel item) {
     box.put(item.url, item);
+    return Future.value();
   }
 }

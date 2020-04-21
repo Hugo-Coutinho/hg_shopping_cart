@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:hg_shopping_cart/core/error/exception.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +16,7 @@ class IconRemoteDataSourceImpl extends IconRemoteDataSource {
   @override
   Future<List<IconModel>> getIcons() async {
     final response = await _getIconsResponse();
-    final jsonIcons = response.statusCode == 200 ? _getIconsJsonData(response) : List<dynamic>();
+    final jsonIcons = response.statusCode == 200 ? _getIconsJsonData(response) : throw ServerException();
     return _getIconModelsByJson(jsonIcons);
   }
 
