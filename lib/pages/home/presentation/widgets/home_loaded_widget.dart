@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 
 class HomeLoadedWidget extends StatefulWidget {
+
+  final List<IconEntity> items;
+  final TextEditingController _filter;
+
+  HomeLoadedWidget(this.items, this._filter);
+
   @override
   _HomeLoadedWidgetState createState() => _HomeLoadedWidgetState();
 }
 
 class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
+
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height / 3,
-      child: Center(
-        child: Text("HomeLoadedWidget"),
-      ),
+    return GridView.builder(
+      itemCount: _getFilteredItems().length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 24.0, mainAxisSpacing: 32.0),
+      itemBuilder: (BuildContext context, int index) {
+        return Image.network(_getFilteredItems()[index].url);
+      },
     );
   }
+
+  List<IconEntity> _getFilteredItems() {
+    if (widget._filter.text.isNotEmpty) {
+      return widget.items.where((currentItem) => currentItem.name.toLowerCase().contains(widget._filter.text.toLowerCase())).toList();
+    }
+    return widget.items;
+  }
 }
+
