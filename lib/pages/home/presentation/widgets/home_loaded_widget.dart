@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
+import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
 
 class HomeLoadedWidget extends StatefulWidget {
 
   final List<IconEntity> items;
-  final TextEditingController _filter;
+  final TextEditingController filter;
+  final HomeBloc homeBloc;
 
-  HomeLoadedWidget(this.items, this._filter);
+  HomeLoadedWidget(this.items, this.filter, this.homeBloc);
 
   @override
   _HomeLoadedWidgetState createState() => _HomeLoadedWidgetState();
@@ -27,8 +29,8 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
   }
 
   List<IconEntity> _getFilteredItems() {
-    if (widget._filter.text.isNotEmpty) {
-      return widget.items.where((currentItem) => currentItem.name.toLowerCase().contains(widget._filter.text.toLowerCase())).toList();
+    if (widget.filter.text.isNotEmpty) {
+      return widget.items.where((currentItem) => currentItem.name.toLowerCase().contains(widget.filter.text.toLowerCase())).toList();
     }
     return widget.items;
   }

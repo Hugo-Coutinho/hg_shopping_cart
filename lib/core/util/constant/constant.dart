@@ -1,4 +1,7 @@
 class Constant {
+  // HOME
+  static String appBarTitle =  "Choose a food to cart";
+
   // API
   static String token =  "";
   static final String authorization = "Authorization";

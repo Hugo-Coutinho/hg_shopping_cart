@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
+import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_event.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_state.dart';
@@ -14,26 +15,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final HomeBloc _homeBloc = locator<HomeBloc>();
   final TextEditingController _filter = new TextEditingController();
-  List names = new List();
-  String _searchText = "";
-  List filteredNames = new List();
   Icon _searchIcon = new Icon(Icons.search);
-  Widget _appBarTitle = new Text('Search an food');
+  Widget _appBarTitle = new Text(Constant.appBarTitle);
 
   _HomePageState() {
-    _filter.addListener(() {
-      if (_filter.text.isEmpty) {
-        setState(() {
-          _searchText = "";
-          filteredNames = names;
-        });
-      } else {
-        setState(() {
-          _searchText = _filter.text;
-        });
-      }
-    });
+    _filter.addListener(() { setState(() {} ); });
   }
 
   @override
@@ -64,7 +52,7 @@ class _HomePageState extends State<HomePage> {
 
   BlocProvider<HomeBloc> buildBody(BuildContext context) {
     return BlocProvider(
-      create: (_) => locator<HomeBloc>()..add(HomeToListItemsEvent()),
+      create: (_) => _homeBloc..add(HomeToListItemsEvent()),
       child: Center(
         child: Padding(
             padding: const EdgeInsets.all(10),
@@ -79,29 +67,32 @@ class _HomePageState extends State<HomePage> {
 
   _mapWidgetByHomeCurrentState(HomeState state) {
     if (state is HomeLoadedState) {
-      return HomeLoadedWidget(state.items, _filter);
+      return HomeLoadedWidget(state.items, _filter, _homeBloc);
     } else if (state is HomeErrorState) {
       return HomeWithErrorWidget();
     }
     return HomeLoadingWidget();
   }
 
-  void _searchPressed() {
+  _searchPressed() {
     setState(() {
-      if (this._searchIcon.icon == Icons.search) {
-        this._searchIcon = new Icon(Icons.close);
-        this._appBarTitle = new TextField(
-          controller: _filter,
-          autofocus: true,
-          decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
-        );
-      } else {
-        this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text('Search a food');
-        filteredNames = names;
-        _filter.clear();
-      }
+      this._searchIcon.icon == Icons.search ? _initSearch() : _stopSearch();
     });
+  }
+
+  _initSearch() {
+    this._searchIcon = new Icon(Icons.close);
+    this._appBarTitle = new TextField(
+      controller: _filter,
+      autofocus: true,
+      decoration: new InputDecoration(
+          prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+    );
+  }
+
+  _stopSearch() {
+    this._searchIcon = new Icon(Icons.search);
+    this._appBarTitle = new Text(Constant.appBarTitle);
+    _filter.clear();
   }
 }
