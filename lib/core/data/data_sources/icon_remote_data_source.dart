@@ -5,7 +5,7 @@ import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:http/http.dart' as http;
 
 abstract class IconRemoteDataSource {
-  Future<List<IconModel>> getIcons();
+  Future<List<IconModel>> getIcons(int page);
 }
 
 class IconRemoteDataSourceImpl extends IconRemoteDataSource {
@@ -14,8 +14,8 @@ class IconRemoteDataSourceImpl extends IconRemoteDataSource {
   IconRemoteDataSourceImpl(this.client);
 
   @override
-  Future<List<IconModel>> getIcons() async {
-    final response = await _getIconsResponse();
+  Future<List<IconModel>> getIcons(int page) async {
+    final response = await _getIconsResponse(page);
     final jsonIcons = response.statusCode == 200 ? _getIconsJsonData(response) : throw ServerException();
     return _getIconModelsByJson(jsonIcons);
   }
@@ -28,8 +28,12 @@ class IconRemoteDataSourceImpl extends IconRemoteDataSource {
       return List<dynamic>.from(json.decode(response.body)['data']);
   }
 
-  Future<http.Response> _getIconsResponse() {
-    return http.get(Uri.encodeFull(Constant.getIconsUrl),
+  Future<http.Response> _getIconsResponse(int page) {
+    return http.get(Uri.encodeFull(_prepareUrlPathByPage(page)),
         headers: {Constant.authorization: Constant.token});
+  }
+
+  String _prepareUrlPathByPage(int page) {
+    return Constant.getIconsUrl + "$page";
   }
 }

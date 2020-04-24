@@ -7,8 +7,7 @@ import 'package:hg_shopping_cart/core/network/network_info.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 
 abstract class HomeRepository {
-  Future<Either<Failure, List<IconModel>>> getIcons();
-  Future<Either<Failure, List<IconModel>>> didFilterIconsByName(String name);
+  Future<Either<Failure, List<IconModel>>> getIcons(int page);
   Future<void> addItemToCart(IconModel item);
 }
 
@@ -20,28 +19,14 @@ class HomeRepositoryImpl implements HomeRepository {
   HomeRepositoryImpl(this.remoteDataSource, this.localDataSource, this.networkInfo);
 
   @override
-  Future<Either<Failure, List<IconModel>>> getIcons() async {
+  Future<Either<Failure, List<IconModel>>> getIcons(int page) async {
     try {
       networkInfo.connectionCheck();
-      final serverResult = await remoteDataSource.getIcons();
+      final serverResult = await remoteDataSource.getIcons(page);
       return Right(serverResult);
     } on NetworkException {
       return Left(NetworkFailure());
     } on ServerException  {
-      return Left(ServerFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<IconModel>>> didFilterIconsByName(String name) async {
-    try {
-      networkInfo.connectionCheck();
-      final serverResult = await remoteDataSource.getIcons();
-      final filterItem = serverResult.where((currentIcon) => currentIcon.name.contains(name));
-      return filterItem.isNotEmpty ? Right(filterItem) : Left(ServerFailure());
-    } on NetworkException {
-      return Left(NetworkFailure());
-    } on ServerException {
       return Left(ServerFailure());
     }
   }

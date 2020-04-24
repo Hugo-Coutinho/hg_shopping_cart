@@ -47,11 +47,11 @@ void main() {
 
         // arrange
         final List<IconModel> iconModelsFromJsonMap = _getIconsFromFixtures();
-        when(mockRemoteDataSource.getIcons()).thenAnswer((_) async => iconModelsFromJsonMap);
+        when(mockRemoteDataSource.getIcons(1)).thenAnswer((_) async => iconModelsFromJsonMap);
 
         try {
           // act
-          final Either<Failure, List<IconModel>> eitherResult = await homeRepository.getIcons();
+          final Either<Failure, List<IconModel>> eitherResult = await homeRepository.getIcons(1);
 
           // assert
           eitherResult.fold((failure) => expect(failure, throwsA(isAssertionError)),
@@ -68,38 +68,14 @@ void main() {
           () async {
 
         // arrange
-        when(mockRemoteDataSource.getIcons()).thenAnswer((_) async => throw ServerException());
+        when(mockRemoteDataSource.getIcons(1)).thenAnswer((_) async => throw ServerException());
 
         try {
           // act
-          await homeRepository.getIcons();
+          await homeRepository.getIcons(1);
 
           // assert
           throwsA(isAssertionError);
-        } on Exception catch (e) {
-          expect(e, ServerException);
-        }
-      },
-    );
-  });
-
-  group('Testing either results from didFilterIconsByName(String name) method', () {
-
-    test(
-      'Should throw Service Failure',
-          () async {
-
-        // arrange
-            final iconName = "apple";
-        when(mockRemoteDataSource.getIcons()).thenAnswer((_) async => throw ServerException());
-
-        try {
-          // act
-          await homeRepository.didFilterIconsByName(iconName);
-
-          // assert
-          throwsA(isAssertionError);
-
         } on Exception catch (e) {
           expect(e, ServerException);
         }

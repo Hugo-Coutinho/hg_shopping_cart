@@ -34,7 +34,7 @@ void main() {
       final modelExpected = IconModel(url: 'https://image.flaticon.com/icons/png/512/174/174848.png', name: 'Facebook',amount: 1);
 
       // act
-      dataSource.getIcons().then((result) {
+      dataSource.getIcons(1).then((result) {
         // assert
         expect(modelExpected, result.first);
       });
@@ -48,7 +48,7 @@ void main() {
       setUpMockHttpClientFailure404();
 
       // act
-      dataSource.getIcons().then((result) {
+      dataSource.getIcons(1).then((result) {
         // assert
         expect(0, result.asMap().length);
       });

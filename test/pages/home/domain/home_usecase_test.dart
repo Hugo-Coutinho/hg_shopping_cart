@@ -33,10 +33,10 @@ void main() {
           () async {
         // arrange
         final List<IconEntity> iconModelsFromJsonMap = _getIconsFromFixtures();
-        when(repository.getIcons()).thenAnswer((_) async => Right(iconModelsFromJsonMap));
+        when(repository.getIcons(1)).thenAnswer((_) async => Right(iconModelsFromJsonMap));
 
         // act
-        final eitherResult = await usecase.loadIcons();
+        final eitherResult = await usecase.loadIcons(1);
 
         // assert
         eitherResult.fold(
@@ -50,52 +50,10 @@ void main() {
       'Should throw server failure',
           () async {
         // arrange
-        when(repository.getIcons()).thenAnswer((_) async => Left(ServerFailure()));
+        when(repository.getIcons(1)).thenAnswer((_) async => Left(ServerFailure()));
 
         // act
-        final eitherResult = await usecase.loadIcons();
-
-        // assert
-        eitherResult.fold(
-                (failure) => expect(failure, ServerFailure()),
-                (items) => expect(items, throwsA(isAssertionError))
-        );
-      },
-    );
-  });
-
-
-  group('Testing either results from didSearchItem(name) method', () {
-    test(
-      'Should bring icons who contains the name passed.',
-          () async {
-
-        // arrange
-        final searchApple = "apple";
-        final List<IconEntity> filteredMockItems = _getIconsFromFixtures().where((element) => element.name.contains(searchApple)).toList();
-        when(repository.didFilterIconsByName(searchApple)).thenAnswer((_) async => Right(filteredMockItems));
-
-        // act
-        final eitherResult = await usecase.didSearchItem(searchApple);
-
-        // assert
-        eitherResult.fold(
-                (failure) => expect(throwsA(isAssertionError), filteredMockItems),
-                (items) => expect(items, filteredMockItems)
-        );
-      },
-    );
-
-    test(
-      'Should throw ServerFailure',
-          () async {
-
-        // arrange
-        final searchApple = "apple";
-        when(repository.didFilterIconsByName(searchApple)).thenAnswer((_) async => Left(ServerFailure()));
-
-        // act
-        final eitherResult = await usecase.didSearchItem(searchApple);
+        final eitherResult = await usecase.loadIcons(1);
 
         // assert
         eitherResult.fold(
