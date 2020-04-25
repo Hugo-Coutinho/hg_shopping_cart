@@ -8,7 +8,7 @@ import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 
 abstract class HomeRepository {
   Future<Either<Failure, List<IconModel>>> getIcons(int page);
-  Future<void> addItemToCart(IconModel item);
+  addItemToCart(IconModel item);
 }
 
 class HomeRepositoryImpl implements HomeRepository {
@@ -32,7 +32,7 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-   addItemToCart(IconModel item) async {
-   return await localDataSource.add([item]);
+   addItemToCart(IconModel item) {
+   localDataSource.add([item]);
   }
 }

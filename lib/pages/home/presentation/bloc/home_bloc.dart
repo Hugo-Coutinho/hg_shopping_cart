@@ -9,9 +9,9 @@ import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_state.dart';
 import 'package:dartz/dartz.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final HomeUseCase homeUsecase;
+  final HomeUseCase _homeUseCase;
 
-  HomeBloc(this.homeUsecase);
+  HomeBloc(this._homeUseCase);
 
   @override
   HomeState get initialState => HomeLoadingState();
@@ -19,7 +19,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
       yield HomeLoadingState();
-      final eitherFailureOrItems = await homeUsecase.loadIcons(Constant.numberPage);
+      final eitherFailureOrItems = await _homeUseCase.loadIcons(Constant.numberPage);
       yield* _eitherLoadedOrErrorState(eitherFailureOrItems);
   }
 
@@ -40,6 +40,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<Either<Failure, List<IconEntity>>> fetchingItems(int page) async {
-    return await homeUsecase.loadIcons(page);
+    return await _homeUseCase.loadIcons(page);
+  }
+
+  addItem(IconEntity item) {
+    _homeUseCase.didSelectItem(item);
   }
 }

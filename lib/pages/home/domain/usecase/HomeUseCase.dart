@@ -4,7 +4,7 @@ import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 
 abstract class HomeUseCase {
-  Future<Either<Failure, void>> didSelectItem(IconEntity item);
+  didSelectItem(IconEntity item);
   Future<Either<Failure, List<IconEntity>>> loadIcons(int page);
 }
 
@@ -14,8 +14,8 @@ class HomeUseCaseImpl extends HomeUseCase {
   HomeUseCaseImpl(this.repository);
 
   @override
-  Future<Either<Failure, void>> didSelectItem(IconEntity item) async {
-    return Right(repository.addItemToCart(item));
+   didSelectItem(IconEntity item) async {
+    return repository.addItemToCart(item);
   }
 
   @override

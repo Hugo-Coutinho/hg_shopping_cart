@@ -25,7 +25,7 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
   void initState() {
     _items = widget.items;
     _stream.add(_items);
-    _getItemsBy8Pages();
+    _getThousandItems();
     super.initState();
   }
 
@@ -36,7 +36,7 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
       stream: _stream.stream,
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          return _buildGridView(snapshot.data);
+          return _buildGridView();
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         }
@@ -45,47 +45,36 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
     );
   }
 
-  Widget _buildGridView(dynamic data) {
+  Widget _buildGridView() {
     return GridView.builder(
-      itemCount: _getFilteredItems(data).length,
+      itemCount: _getFilteredItems().length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 24.0, mainAxisSpacing: 32.0),
       itemBuilder: (BuildContext context, int index) {
-        return Image.network(_getFilteredItems(data)[index].url);
+        return _buildGridViewItem(index);
       },
     );
   }
 
-  List<IconEntity> _getFilteredItems(dynamic data) {
-    // NAO CONSIGO USAR FUNCIONAL EM ITPOS DYNAMICS, E TB N CONSEGUI FAZER UM CASTING PARA O USO DO FUNCIONAL.
-    // CORRIGIIIIIRRR!!!!!¸
+  Widget _buildGridViewItem(int index) {
+    final currentItem = _getFilteredItems()[index];
 
-//    return widget.filter.text.isNotEmpty ?
-//    data.where((currentItem) => currentItem.name.toLowerCase().contains(widget.filter.text.toLowerCase())).toList()
-//        : data;
-
-  return widget.filter.text.isNotEmpty ? _doFilteredItems(data) : data;
+    return GestureDetector(
+      child: Image.network(currentItem.url),
+      onTap: () {
+        widget.homeBloc.addItem(currentItem);
+      },
+    );
   }
 
-  List<IconEntity>_doFilteredItems (dynamic data) {
-    List<IconEntity> listItem = List<IconEntity>();
-    for (int i = 0; i < _getItemsFromDynamic(data).length; i++) {
-      if (_getItemsFromDynamic(data)[i].name.toLowerCase().contains(widget.filter.text.toLowerCase())) {
-        listItem.add(_getItemsFromDynamic(data)[i]);
-      }
-    }
-    return listItem;
+  List<IconEntity> _getFilteredItems() {
+    return widget.filter.text.isNotEmpty ?
+    _items.where((currentItem) => currentItem.name.toLowerCase().contains(widget.filter.text.toLowerCase())).toList()
+        : _items;
   }
 
-  List<IconEntity> _getItemsFromDynamic(dynamic data) {
-    List<IconEntity> listItem = List<IconEntity>();
-    for (int i = 0; i < data.length; i++) {
-      listItem.add(data[i]);
-    }
-    return listItem;
-  }
 
-  _getItemsBy8Pages() {
-    final List<int> pages = [2, 3, 4, 5, 6, 7, 8];
+  _getThousandItems() {
+    final List<int> pages = [2, 3, 4, 5, 6, 7, 8, 9, 10];
     pages.forEach((currentPage) { _fetchItemsByPage(currentPage); });
   }
 
@@ -102,7 +91,7 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
   }
 
   _addItemsToList(List<IconEntity> items) {
-    items.forEach((element) =>  _items.map((itemMapped) => itemMapped.name).toList().contains(element.name) ? "" : _items.add(element) );
+    items.forEach((element) =>  _items.map((itemMapped) => itemMapped.name.toLowerCase()).toList().contains(element.name.toLowerCase()) ? "" : _items.add(element) );
   }
 }
 

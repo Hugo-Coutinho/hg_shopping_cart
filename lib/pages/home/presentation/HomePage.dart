@@ -47,7 +47,19 @@ class _HomePageState extends State<HomePage> {
         icon: _searchIcon,
         onPressed: _searchPressed,
       ),
+        actions: _buildBarActions(),
     );
+  }
+
+  List<Widget> _buildBarActions() {
+    return <Widget>[
+      IconButton(
+        icon: Icon(Icons.shopping_cart),
+        onPressed: () {
+          Navigator.of(context).pushNamed(Constant.shoppingCartPage);
+        },
+      )
+    ];
   }
 
   BlocProvider<HomeBloc> buildBody(BuildContext context) {

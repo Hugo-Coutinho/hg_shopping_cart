@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hg_shopping_cart/core/data/generate_token.dart';
 import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
-import 'package:hg_shopping_cart/pages/home/presentation/HomePage.dart';
-
-//void main() => runApp(MyApp());
+import 'package:hg_shopping_cart/core/router/Router.dart';
 
 void main() async {
-  _didApplicationLoad();
+  _didApplicationLoad().whenComplete(() async {
+    runApp(MyApp());
+  });
 }
 
 Future<void> _didApplicationLoad() async {
   setupLocator();
-  _setupRemoteApiAccess().whenComplete(() async {
-    runApp(MyApp());
-//    final IconLocalDataSource boxManager = locator<IconLocalDataSource>();
-//    final HomeRepository homeRepository = locator<HomeRepository>();
-//    final icons = await homeRepository.getIcons();
-
-  });
+  return await _setupRemoteApiAccess();
 }
 
 Future<void> _setupRemoteApiAccess() async {
@@ -26,15 +20,24 @@ Future<void> _setupRemoteApiAccess() async {
 }
 
 class MyApp extends StatelessWidget {
+  final router = Router();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Number Trivia',
-      theme: ThemeData(
-        primaryColor: Colors.green.shade800,
-        accentColor: Colors.green.shade600,
+    return GestureDetector(
+      child: MaterialApp(
+        title: 'Shopping cart',
+        initialRoute: router.getInitialRoute(),
+        routes: router.getRoutes(),
+        theme: ThemeData(
+          primaryColor: Colors.green.shade800,
+          accentColor: Colors.green.shade600,
+        ),
       ),
-      home: HomePage(),
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
     );
   }
 }
+

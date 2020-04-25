@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hg_shopping_cart/core/error/exception.dart';
+import 'package:hg_shopping_cart/pages/home/data/model/icon.model.g.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 abstract class IconLocalDataSource {
-  Future<void> add(List<IconModel> icons);
+  add(List<IconModel> icons);
   IconModel findById(String url);
   List<IconModel> findAll();
   void delete(IconModel item);
@@ -26,16 +27,16 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
   _hiveInitialize() async {
     final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
     Hive.init(appDocumentDirectory.path);
+    Hive.registerAdapter(IconModelAdapter());
     this.box = await Hive.openBox(boxName);
   }
 
   @override
-  Future<void> add(List<IconModel> icons) {
-    icons.forEach((currentItem) async {
+  add(List<IconModel> icons) {
+    icons.forEach((currentItem) {
       final IconModel itemFromBox = box.get(currentItem.url);
-      itemFromBox != null ? _incrementAmount(currentItem) : await _insertItem(currentItem);
+      itemFromBox != null ? _incrementAmount(currentItem) : _insertItem(currentItem);
     });
-    return Future.value();
   }
 
   @override
@@ -82,8 +83,7 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
   item.delete();
   }
 
-  Future<void> _insertItem(IconModel item) {
+  _insertItem(IconModel item) {
     box.put(item.url, item);
-    return Future.value();
   }
 }

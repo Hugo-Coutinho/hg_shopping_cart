@@ -1,6 +1,14 @@
 class Constant {
+
+  // ROUTER
+  static String homePage = "/";
+  static String shoppingCartPage = "/ShoppingCart";
+
   // HOME
   static String appBarTitle =  "Choose a food to cart";
+
+  // SHOPPING_CART
+  static String shoppingCartTitle =  "Shopping Cart";
 
   // API
   static String token =  "";
