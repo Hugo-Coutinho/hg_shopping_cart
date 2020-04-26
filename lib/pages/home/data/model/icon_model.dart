@@ -1,8 +1,10 @@
-import 'package:flutter/foundation.dart';
+import  'package:flutter/foundation.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hive/hive.dart';
 
-@HiveType(typeId: 1)
+part 'icon_model.g.dart';
+
+@HiveType(typeId: 0)
 class IconModel extends IconEntity {
   @HiveField(0)
   String name;

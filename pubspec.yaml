@@ -20,19 +20,15 @@ dependencies:
   # Remote API
   data_connection_checker: ^0.3.4
   http: ^0.12.0+3
-  # Local cache
-    # Local database
-  hive: ^1.0.0
-  hive_flutter: ^0.2.1
-  # For OS-specific directory paths
-  path_provider: ^1.3.0
+  hive: ^1.4.1+1
+  hive_flutter: ^0.3.0+2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^4.1.1
-  build_runner: ^1.0.0
-  hive_generator: ^0.7.0
+  hive_generator: ^0.7.0+2
+  build_runner: ^1.9.0
 
 flutter:
   uses-material-design: true

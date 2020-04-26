@@ -15,8 +15,14 @@ class _ShoppingCartDefaultWidgetState extends State<ShoppingCartDefaultWidget> {
 
   @override
   void initState() {
-    _shoppingList = _bloc.getList();
     super.initState();
+    _shoppingList = _bloc.getList();
+  }
+
+  @override
+  void setState(fn) {
+    super.setState(fn);
+    _shoppingList = _bloc.getList();
   }
 
   @override
@@ -26,7 +32,6 @@ class _ShoppingCartDefaultWidgetState extends State<ShoppingCartDefaultWidget> {
 
   Widget _buildBody(BuildContext context) {
     return new ListView.builder(
-      padding: const EdgeInsets.all(10.0),
       itemCount: _shoppingList.length,
       itemBuilder: (context, i) {
         return _buildListViewForRow(i);
@@ -35,20 +40,24 @@ class _ShoppingCartDefaultWidgetState extends State<ShoppingCartDefaultWidget> {
   }
 
   Widget _buildListViewForRow(int index) {
-    final amountOfItem = _shoppingList[index].amount;
+    final currentItem = _shoppingList[index];
+    final amountOfItem = currentItem.amount;
 
     return  new ListTile(
       leading: new IconButton(
-        icon: Image.network(_shoppingList[index].url),
+        iconSize: 80,
+        icon: Image.network(currentItem.url),
         onPressed: () {},
       ),
-      title: new Text(_shoppingList[index].name),
+      title: new Text(currentItem.name),
       subtitle: new Text("amount: " + "$amountOfItem"),
       trailing: new IconButton(
         icon: new Icon(Icons.clear),
-        onPressed: () {},
+        onPressed: () {
+          _bloc.clearItem(currentItem);
+          setState(() {});
+        },
       ),
     );
   }
-
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 
-class IconEntity extends HiveObject {
+class IconEntity {
   String name;
   String url;
   int amount;

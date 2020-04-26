@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hg_shopping_cart/core/error/exception.dart';
-import 'package:hg_shopping_cart/pages/home/data/model/icon.model.g.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -67,7 +66,7 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
 
   void _incrementAmount(IconModel item) {
     item.amount += 1;
-    item.save();
+  _insertItem(item);
   }
 
   void _decrementAmount(IconModel item) {
@@ -76,11 +75,11 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
 
   void _decrementAmountAndUpdateItem(IconModel item) {
      item.amount -= 1;
-     item.save();
+     _insertItem(item);
   }
 
   void _removeItem(IconModel item) {
-  item.delete();
+    box.delete(item.url);
   }
 
   _insertItem(IconModel item) {
