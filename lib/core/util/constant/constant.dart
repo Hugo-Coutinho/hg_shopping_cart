@@ -2,7 +2,7 @@ class Constant {
 
   // ROUTER
   static String homePage = "/";
-  static String shoppingCartPage = "/ShoppingCart";
+  static String shoppingCartPage = "/ShoppingCartPage";
 
   // HOME
   static String appBarTitle =  "Choose a food to cart";

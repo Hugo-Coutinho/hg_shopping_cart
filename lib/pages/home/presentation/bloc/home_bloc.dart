@@ -3,7 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
-import 'package:hg_shopping_cart/pages/home/domain/usecase/HomeUseCase.dart';
+import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_event.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_state.dart';
 import 'package:dartz/dartz.dart';

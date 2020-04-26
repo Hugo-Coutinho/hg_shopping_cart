@@ -21,10 +21,10 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
 
   IconLocalDataSourceImpl({@required this.boxName}) {
     WidgetsFlutterBinding.ensureInitialized();
-    _hiveInitialize();
+    _hiveInitialization();
   }
 
-  _hiveInitialize() async {
+  _hiveInitialization() async {
     final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
     Hive.init(appDocumentDirectory.path);
     Hive.registerAdapter(IconModelAdapter());

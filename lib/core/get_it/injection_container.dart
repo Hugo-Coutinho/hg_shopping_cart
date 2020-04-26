@@ -6,8 +6,10 @@ import 'package:hg_shopping_cart/core/data/generate_token.dart';
 import 'package:hg_shopping_cart/core/network/network_info.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
-import 'package:hg_shopping_cart/pages/home/domain/usecase/HomeUseCase.dart';
+import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
+import 'package:hg_shopping_cart/pages/shopping_cart/domain/usecase/shopping_cart_use_case.dart';
+import 'package:hg_shopping_cart/pages/shopping_cart/presentation/bloc/shopping_cart_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:hg_shopping_cart/pages/shopping_cart/data/repository/shooping_cart_repository.dart';
 
@@ -27,20 +29,17 @@ _injectToDataSourceLayer() {
       () => IconRemoteDataSourceImpl(locator()));
   locator
       .registerLazySingleton<GenerateToken>(() => GenerateTokenImpl(locator()));
-  locator.registerLazySingleton<IconLocalDataSource>(
-      () => IconLocalDataSourceImpl(boxName: Constant.box));
+  locator.registerLazySingleton<IconLocalDataSource>(() => IconLocalDataSourceImpl(boxName: Constant.box));
 }
 
 _injectToRepositoryLayer() {
-  locator.registerLazySingleton<HomeRepository>(
-      () => HomeRepositoryImpl(locator(), locator(), locator()));
-  locator.registerLazySingleton<ShoppingCartRepository>(
-    () => ShoppingCartRepositoryImpl(locator()),
-  );
+  locator.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl(locator(), locator(), locator()));
+  locator.registerLazySingleton<ShoppingCartRepository>(() => ShoppingCartRepositoryImpl(locator()));
 }
 
 _injectToUseCaseLayer() {
   locator.registerLazySingleton<HomeUseCase>(() => HomeUseCaseImpl(locator()));
+  locator.registerLazySingleton<ShoppingCartUseCase>(() => ShoppingCartUseCaseImpl(locator()));
 }
 
 _injectToExternalLayer() {
@@ -54,4 +53,5 @@ _injectToCore() {
 
 _injectToPresentationLayer() {
   locator.registerFactory(() => HomeBloc(locator()));
+  locator.registerFactory(() => ShoppingCartBloc(locator()));
 }

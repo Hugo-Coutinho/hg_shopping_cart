@@ -5,7 +5,7 @@ import 'package:hg_shopping_cart/core/error/failure.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
-import 'package:hg_shopping_cart/pages/home/domain/usecase/HomeUseCase.dart';
+import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
 import 'package:mockito/mockito.dart';
 import '../../../fixtures/get_icons.dart';
 
@@ -32,7 +32,8 @@ void main() {
       'Should bring hundred icon models',
           () async {
         // arrange
-        final List<IconEntity> iconModelsFromJsonMap = _getIconsFromFixtures();
+
+            final List<IconEntity> iconModelsFromJsonMap = _getIconsFromFixtures();
         when(repository.getIcons(1)).thenAnswer((_) async => Right(iconModelsFromJsonMap));
 
         // act

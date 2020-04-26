@@ -2,22 +2,22 @@ import 'package:hg_shopping_cart/core/data/data_sources/icon_local_data_source.d
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 
 abstract class ShoppingCartRepository {
-  List<IconModel> findAllShoppingCart();
   clearItem(IconModel item);
+  List<IconModel> getShoppingList();
 }
 
 class ShoppingCartRepositoryImpl extends ShoppingCartRepository {
-  final IconLocalDataSource localDataSource;
+  final IconLocalDataSource _localDataSource;
 
-  ShoppingCartRepositoryImpl(this.localDataSource);
+  ShoppingCartRepositoryImpl(this._localDataSource);
 
   @override
-  clearItem(IconModel item) {
-    localDataSource.delete(item);
+  clearItem(item) {
+    return _localDataSource.delete(item);
   }
 
   @override
-  List<IconModel> findAllShoppingCart() {
-    return localDataSource.findAll();
+  List<IconModel> getShoppingList() {
+    return _localDataSource.findAll();
   }
 }
