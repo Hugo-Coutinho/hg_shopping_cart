@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
+import 'package:hg_shopping_cart/core/scoped_model/badge_scoped_model.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_event.dart';
@@ -8,6 +9,7 @@ import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_state.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/widgets/home_loaded_widget.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/widgets/home_loading_widget.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/widgets/home_with_error_widget.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _filter = new TextEditingController();
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text(Constant.appBarTitle);
+  final BadgeScopedModel _badgeScopedModel = BadgeScopedModel();
 
   _HomePageState() {
     _filter.addListener(() { setState(() {} ); });
@@ -26,10 +29,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildBar(context),
-      body: buildBody(context),
-      resizeToAvoidBottomPadding: false,
+    _badgeScopedModel.updateAmountFromLocalDatabase(_homeBloc.getAmountShoppingCart());
+
+    return ScopedModel<BadgeScopedModel>(
+      model: _badgeScopedModel,
+      child: Scaffold(
+        appBar: _buildBar(context),
+        body: buildBody(context),
+        resizeToAvoidBottomPadding: false,
+      ),
     );
   }
 
@@ -52,14 +60,57 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _buildBarActions() {
-    return <Widget>[
-      IconButton(
-        icon: Icon(Icons.shopping_cart),
-        onPressed: () {
-          Navigator.of(context).pushNamed(Constant.shoppingCartPage);
-        },
-      )
+    return [
+      Stack(
+        children: <Widget>[
+          _cartIcon(),
+          _showBadgeIfCartIsNotEmtpy(),
+        ],
+      ),
     ];
+  }
+
+  Widget _showBadgeIfCartIsNotEmtpy() {
+    return  ScopedModelDescendant<BadgeScopedModel>(
+            builder: (context, child, badge) {
+              return  _badgeScopedModel.amount > 0 ? _badge(_badgeScopedModel.amount) : Container();
+            }
+        );
+  }
+
+  Positioned _badge(int amount) {
+    return new Positioned(
+          right: 11,
+          top: 11,
+          child: new Container(
+            padding: EdgeInsets.all(2),
+            decoration: new BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            constraints: BoxConstraints(
+              minWidth: 14,
+              minHeight: 14,
+            ),
+            child: Text(
+              '$amount',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 8,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+  }
+
+  IconButton _cartIcon() {
+    return IconButton(
+          icon: Icon(Icons.shopping_cart),
+          onPressed: () {
+            Navigator.of(context).pushNamed(Constant.shoppingCartPage);
+          },
+        );
   }
 
   BlocProvider<HomeBloc> buildBody(BuildContext context) {

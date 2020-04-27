@@ -45,9 +45,8 @@ class _ShoppingCartDefaultWidgetState extends State<ShoppingCartDefaultWidget> {
 
     return  new ListTile(
       leading: new IconButton(
-        iconSize: 80,
         icon: Image.network(currentItem.url),
-        onPressed: () {},
+        onPressed: null,
       ),
       title: new Text(currentItem.name),
       subtitle: new Text("amount: " + "$amountOfItem"),

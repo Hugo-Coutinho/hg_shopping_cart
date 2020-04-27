@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
     return GestureDetector(
       child: MaterialApp(
         title: 'Shopping cart',
+        debugShowCheckedModeBanner: false,
         initialRoute: router.getInitialRoute(),
         routes: router.getRoutes(),
         theme: ThemeData(

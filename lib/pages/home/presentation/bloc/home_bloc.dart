@@ -46,4 +46,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   addItem(IconEntity item) {
     _homeUseCase.didSelectItem(item);
   }
+
+  int getAmountShoppingCart() {
+    return _homeUseCase.amountItemShoppingCart();
+  }
 }

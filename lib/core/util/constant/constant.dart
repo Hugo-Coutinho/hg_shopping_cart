@@ -6,6 +6,8 @@ class Constant {
 
   // HOME
   static String appBarTitle =  "Choose a food to cart";
+  static String didSaveItemAlertTitle = "Congratulations !!";
+  static String didSaveItemAlertMessage = "Item added to the shopping cart";
 
   // SHOPPING_CART
   static String shoppingCartTitle =  "Shopping Cart";

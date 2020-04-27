@@ -9,6 +9,7 @@ import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 abstract class HomeRepository {
   Future<Either<Failure, List<IconModel>>> getIcons(int page);
   addItemToCart(IconModel item);
+  List<IconModel> findAllFromLocalDataBase();
 }
 
 class HomeRepositoryImpl implements HomeRepository {
@@ -34,5 +35,10 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
    addItemToCart(IconModel item) {
    localDataSource.add([item]);
+  }
+
+  @override
+  List<IconModel> findAllFromLocalDataBase() {
+    return localDataSource.findAll();
   }
 }

@@ -51,7 +51,7 @@ class IconLocalDataSourceImpl extends IconLocalDataSource {
 
   @override
   List<IconModel> findAll() {
-    return box.values.toList();
+    return box != null ? box.values.toList() : List<IconModel>();
   }
 
   @override

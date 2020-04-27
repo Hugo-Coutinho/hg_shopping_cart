@@ -5,7 +5,6 @@ import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/shopping_cart/presentation/bloc/shopping_cart_bloc.dart';
 import 'package:hg_shopping_cart/pages/shopping_cart/presentation/widgets/shopping_cart_default_widget.dart';
-
 import 'bloc/shopping_cart_event.dart';
 import 'bloc/shopping_cart_state.dart';
 

@@ -1,8 +1,11 @@
 import 'dart:async';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hg_shopping_cart/core/scoped_model/badge_scoped_model.dart';
+import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class HomeLoadedWidget extends StatefulWidget {
 
@@ -36,7 +39,7 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
       stream: _stream.stream,
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          return _buildGridView();
+          return _buildGridView(context);
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         }
@@ -45,24 +48,48 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
     );
   }
 
-  Widget _buildGridView() {
+  Widget _buildGridView(BuildContext context) {
     return GridView.builder(
       itemCount: _getFilteredItems().length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 24.0, mainAxisSpacing: 32.0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 16.0, mainAxisSpacing: 16.0),
       itemBuilder: (BuildContext context, int index) {
-        return _buildGridViewItem(index);
+        return _buildGridViewItem(context, index);
       },
     );
   }
 
-  Widget _buildGridViewItem(int index) {
+  Widget _buildGridViewItem(BuildContext context, int index) {
     final currentItem = _getFilteredItems()[index];
 
-    return GestureDetector(
-      child: Image.network(currentItem.url),
-      onTap: () {
-        widget.homeBloc.addItem(currentItem);
-      },
+    return ScopedModelDescendant<BadgeScopedModel>(
+        builder: (context, child, badge) {
+          return IconButton(
+            icon: Image.network(currentItem.url),
+            onPressed: () {
+              widget.homeBloc.addItem(currentItem);
+              badge.incrementAmountShoppingItems();
+              _alertUserItemWasSaved(context);
+            },
+          );
+        }
+    );
+  }
+
+  _alertUserItemWasSaved(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: new Text(Constant.didSaveItemAlertTitle),
+          content: new Text(Constant.didSaveItemAlertMessage),
+          actions: <Widget>[
+            CupertinoDialogAction(
+                child: new Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context, 'Ok');
+                }
+            ),
+          ],
+        ),
     );
   }
 
