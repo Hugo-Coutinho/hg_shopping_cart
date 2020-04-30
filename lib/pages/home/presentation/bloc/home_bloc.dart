@@ -33,9 +33,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
       case NetworkFailure:
-        return "Please, verify your internet connection";
+        return Constant.netWorkFailureMessage;
       default:
-        return "something wrong";
+        return Constant.defaultErrorMessage;
     }
   }
 
@@ -47,7 +47,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _homeUseCase.didSelectItem(item);
   }
 
-  int getAmountShoppingCart() {
+  Future<List<IconEntity>> getAmountShoppingCart() {
     return _homeUseCase.amountItemShoppingCart();
   }
 }

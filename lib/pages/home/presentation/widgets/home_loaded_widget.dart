@@ -28,10 +28,9 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
   void initState() {
     _items = widget.items;
     _stream.add(_items);
-    _getThousandItems();
+//    _getThousandItems();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,46 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
-import 'package:hg_shopping_cart/pages/shopping_cart/presentation/bloc/shopping_cart_bloc.dart';
+import 'package:hg_shopping_cart/pages/shopping_cart/domain/usecase/shopping_cart_use_case.dart';
+import 'package:hg_shopping_cart/pages/shopping_cart/presentation/widgets/shopping_cart_Empty_widget.dart';
 
 class ShoppingCartDefaultWidget extends StatefulWidget {
+  final ShoppingCartUseCase _shoppingCartUseCase;
+
+  ShoppingCartDefaultWidget(this._shoppingCartUseCase);
+
   @override
-  _ShoppingCartDefaultWidgetState createState() => _ShoppingCartDefaultWidgetState();
+  _ShoppingCartDefaultWidgetState createState() => _ShoppingCartDefaultWidgetState(_shoppingCartUseCase);
 }
 
 class _ShoppingCartDefaultWidgetState extends State<ShoppingCartDefaultWidget> {
-  final ShoppingCartBloc _bloc = locator<ShoppingCartBloc>();
-  List<IconEntity> _shoppingList = List<IconEntity>();
+  final ShoppingCartUseCase _shoppingCartUseCase;
 
-  @override
-  void initState() {
-    super.initState();
-    _shoppingList = _bloc.getList();
-  }
-
-  @override
-  void setState(fn) {
-    super.setState(fn);
-    _shoppingList = _bloc.getList();
-  }
+  _ShoppingCartDefaultWidgetState(this._shoppingCartUseCase);
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody(context);
-  }
-
-  Widget _buildBody(BuildContext context) {
-    return new ListView.builder(
-      itemCount: _shoppingList.length,
-      itemBuilder: (context, i) {
-        return _buildListViewForRow(i);
+    return FutureBuilder(
+      future: _shoppingCartUseCase.getShoppingList(),
+      builder: (context, AsyncSnapshot<List<IconEntity>>snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container();
+        }
+        return  snapshot.data.length > 0 ? _buildBody(snapshot.data) : ShoppingCartEmptyWidget();
       },
     );
   }
 
-  Widget _buildListViewForRow(int index) {
-    final currentItem = _shoppingList[index];
+  Widget _buildBody(List<IconEntity> items) {
+    return new ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, i) {
+        return _buildListViewForRow(i, items);
+      },
+    );
+  }
+
+  Widget _buildListViewForRow(int index, List<IconEntity> items) {
+    final currentItem = items[index];
     final amountOfItem = currentItem.amount;
 
     return  new ListTile(
@@ -53,8 +54,8 @@ class _ShoppingCartDefaultWidgetState extends State<ShoppingCartDefaultWidget> {
       trailing: new IconButton(
         icon: new Icon(Icons.clear),
         onPressed: () {
-          _bloc.clearItem(currentItem);
-          setState(() {});
+          _shoppingCartUseCase.clearItem(currentItem);
+          setState(() { });
         },
       ),
     );

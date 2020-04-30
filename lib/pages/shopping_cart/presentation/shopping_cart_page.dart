@@ -1,50 +1,53 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
-import 'package:hg_shopping_cart/pages/shopping_cart/presentation/bloc/shopping_cart_bloc.dart';
+import 'package:hg_shopping_cart/core/util/widgets/loading.dart';
+import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
+import 'package:hg_shopping_cart/pages/shopping_cart/domain/usecase/shopping_cart_use_case.dart';
+import 'package:hg_shopping_cart/pages/shopping_cart/presentation/widgets/shopping_cart_Empty_widget.dart';
 import 'package:hg_shopping_cart/pages/shopping_cart/presentation/widgets/shopping_cart_default_widget.dart';
-import 'bloc/shopping_cart_event.dart';
-import 'bloc/shopping_cart_state.dart';
 
 class ShoppingCartPage extends StatefulWidget {
   @override
-  _State createState() => _State();
+  _ShoppingCartState createState() => _ShoppingCartState();
 }
 
-class _State extends State<ShoppingCartPage> {
-  final ShoppingCartBloc _bloc = locator<ShoppingCartBloc>();
+class _ShoppingCartState extends State<ShoppingCartPage> {
+  final ShoppingCartUseCase _shoppingCartUseCase = locator<ShoppingCartUseCase>();
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _shoppingCartUseCase.getShoppingList(),
+      builder: (context, AsyncSnapshot<List<IconEntity>>snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _presentLoading();
+        }
+        return _buildShoppingCartPage(snapshot.data);
+      },
+    );
+  }
+
+  Widget _buildShoppingCartPage(List<IconEntity> items) {
     return Scaffold(
       appBar: AppBar(
         title: Text(Constant.shoppingCartTitle),
       ),
-      body: buildBody(context),
+      body: _buildBody(items),
       resizeToAvoidBottomPadding: false,
     );
   }
 
-  BlocProvider<ShoppingCartBloc> buildBody(BuildContext context) {
-    return BlocProvider(
-      create: (_) => _bloc..add(ShoppingCartDefaultEvent()),
-      child: Center(
-        child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: BlocBuilder<ShoppingCartBloc, ShoppingCartState>(
-              builder: (context, state) {
-                return _mapWidgetByShoppingCartCurrentState(state);
-              },
-            )),
-      ),
-    );
+  Widget _buildBody(List<IconEntity> items) {
+    return items.length > 0 ? ShoppingCartDefaultWidget(_shoppingCartUseCase) : _presentEmptyPage();
   }
 
-  _mapWidgetByShoppingCartCurrentState(ShoppingCartState state) {
-    if (state is ShoppingCartDefaultState) {
-      return ShoppingCartDefaultWidget();
-    }
+  Widget _presentLoading() {
+    return Loading();
+  }
+
+  Widget _presentEmptyPage() {
+    return ShoppingCartEmptyWidget();
   }
 }

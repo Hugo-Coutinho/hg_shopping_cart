@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/scoped_model/badge_scoped_model.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
+import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_event.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_state.dart';
@@ -18,10 +19,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeBloc _homeBloc = locator<HomeBloc>();
-  final TextEditingController _filter = new TextEditingController();
+    final TextEditingController _filter = new TextEditingController();
+  final BadgeScopedModel _badgeScopedModel = BadgeScopedModel();
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text(Constant.appBarTitle);
-  final BadgeScopedModel _badgeScopedModel = BadgeScopedModel();
 
   _HomePageState() {
     _filter.addListener(() { setState(() {} ); });
@@ -29,25 +30,45 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _badgeScopedModel.updateAmountFromLocalDatabase(_homeBloc.getAmountShoppingCart());
-
     return ScopedModel<BadgeScopedModel>(
       model: _badgeScopedModel,
-      child: Scaffold(
-        appBar: _buildBar(context),
-        body: buildBody(context),
-        resizeToAvoidBottomPadding: false,
+      child: FutureBuilder(
+        future: _homeBloc.getAmountShoppingCart(),
+        builder: (context, AsyncSnapshot<List<IconEntity>>snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return _presentHomePageWithBadge(snapshot.data);
+          }
+          return _presentHomePageDefault(_buildAppBarActions());
+        },
       ),
     );
   }
 
   @override
-  void dispose() {
+  dispose() {
     _filter.dispose();
     super.dispose();
   }
 
-  Widget _buildBar(BuildContext context) {
+  _presentHomePageWithBadge(List<IconEntity> items) {
+    final itemsTotal = items.map((item) => item.amount).fold(0,(current, next) => current + next);
+    _badgeScopedModel.updateAmountFromLocalDatabase(itemsTotal);
+
+    return ScopedModel<BadgeScopedModel>(
+      model: _badgeScopedModel,
+      child: _presentHomePageDefault(_buildAppBarActionsWithBadge()),
+    );
+  }
+
+  Widget _presentHomePageDefault(List<Widget> appBarActions) {
+    return Scaffold(
+      appBar: _buildBar(appBarActions),
+      body: buildBody(context),
+      resizeToAvoidBottomPadding: false,
+    );
+  }
+
+  Widget _buildBar(List<Widget> actions) {
     return new AppBar(
       centerTitle: true,
       title: _appBarTitle,
@@ -55,25 +76,34 @@ class _HomePageState extends State<HomePage> {
         icon: _searchIcon,
         onPressed: _searchPressed,
       ),
-        actions: _buildBarActions(),
+        actions: actions,
     );
   }
 
-  List<Widget> _buildBarActions() {
+  List<Widget> _buildAppBarActions() {
+    return [ _showCartIconIfIsNotSearching() ];
+  }
+
+  List<Widget> _buildAppBarActionsWithBadge() {
     return [
       Stack(
         children: <Widget>[
-          _cartIcon(),
-          _showBadgeIfCartIsNotEmtpy(),
+          _showCartIconIfIsNotSearching(),
+          _showBadgeIfHasItem(),
         ],
       ),
     ];
   }
 
-  Widget _showBadgeIfCartIsNotEmtpy() {
+  Widget _showCartIconIfIsNotSearching() {
+    return _searchIcon.icon == Icons.search ?  _cartIcon() : Container();
+  }
+
+
+  Widget _showBadgeIfHasItem() {
     return  ScopedModelDescendant<BadgeScopedModel>(
             builder: (context, child, badge) {
-              return  _badgeScopedModel.amount > 0 ? _badge(_badgeScopedModel.amount) : Container();
+              return  badge.amount > 0 ? _badge(badge.amount) : Container();
             }
         );
   }
@@ -139,7 +169,7 @@ class _HomePageState extends State<HomePage> {
 
   _searchPressed() {
     setState(() {
-      this._searchIcon.icon == Icons.search ? _initSearch() : _stopSearch();
+      _searchIcon.icon == Icons.search ? _initSearch() : _stopSearch();
     });
   }
 
@@ -148,8 +178,7 @@ class _HomePageState extends State<HomePage> {
     this._appBarTitle = new TextField(
       controller: _filter,
       autofocus: true,
-      decoration: new InputDecoration(
-          prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+      decoration: new InputDecoration(hintText: 'Search...'),
     );
   }
 

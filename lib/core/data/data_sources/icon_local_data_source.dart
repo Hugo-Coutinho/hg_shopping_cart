@@ -8,81 +8,88 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 abstract class IconLocalDataSource {
   add(List<IconModel> icons);
   IconModel findById(String url);
-  List<IconModel> findAll();
-  void delete(IconModel item);
-  void deleteAll();
-  void tearDown();
+  Future<List<IconModel>> findAll();
+  delete(IconModel item);
+  deleteAll();
+  tearDown();
 }
 
 class IconLocalDataSourceImpl extends IconLocalDataSource {
   final String boxName;
-  Box<IconModel> box;
+  Box<IconModel> _box;
 
   IconLocalDataSourceImpl({@required this.boxName}) {
     WidgetsFlutterBinding.ensureInitialized();
-    _hiveInitialization();
-  }
-
-  _hiveInitialization() async {
-    final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
-    Hive.init(appDocumentDirectory.path);
-    Hive.registerAdapter(IconModelAdapter());
-    this.box = await Hive.openBox(boxName);
   }
 
   @override
   add(List<IconModel> icons) {
     icons.forEach((currentItem) {
-      final IconModel itemFromBox = box.get(currentItem.url);
+      final IconModel itemFromBox = _box.get(currentItem.url);
       itemFromBox != null ? _incrementAmount(currentItem) : _insertItem(currentItem);
     });
   }
 
   @override
-  void delete(IconModel item) {
-    final IconModel itemFromBox = box.get(item.url);
-    itemFromBox != null ? _decrementAmount(item) : _insertItem(item);
+  delete(IconModel item) {
+    final IconModel itemFromBox = _box.get(item.url);
+    itemFromBox != null ? _decrementAmount(item) : _removeItem(item);
   }
 
   @override
   IconModel findById(String url) {
-    return box.values.toList().firstWhere((currentItem) => currentItem.url == url, orElse: () => throw CacheException());
+    return _box.values.toList().firstWhere((currentItem) => currentItem.url == url, orElse: () => throw CacheException());
   }
 
   @override
-  List<IconModel> findAll() {
-    return box != null ? box.values.toList() : List<IconModel>();
+  Future<List<IconModel>> findAll() async {
+    await _checkHiveSetup();
+   return _box.values.toList();
   }
 
   @override
-  void deleteAll() {
-    box.clear();
+  deleteAll() {
+    _box.clear();
   }
 
   @override
-  void tearDown() {
+  tearDown() {
     Hive.close();
   }
 
-  void _incrementAmount(IconModel item) {
+  Future _checkHiveSetup() async {
+    if (_box != null) {
+      return Future;
+    }
+    await _hiveInitialization();
+  }
+
+  Future _hiveInitialization() async {
+    final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
+    Hive.init(appDocumentDirectory.path);
+    Hive.registerAdapter(IconModelAdapter());
+    this._box = await Hive.openBox(boxName);
+  }
+
+   _incrementAmount(IconModel item) {
     item.amount += 1;
   _insertItem(item);
   }
 
-  void _decrementAmount(IconModel item) {
+   _decrementAmount(IconModel item) {
     item.amount > 1 ? _decrementAmountAndUpdateItem(item) : _removeItem(item);
   }
 
-  void _decrementAmountAndUpdateItem(IconModel item) {
+   _decrementAmountAndUpdateItem(IconModel item) {
      item.amount -= 1;
      _insertItem(item);
   }
 
-  void _removeItem(IconModel item) {
-    box.delete(item.url);
+   _removeItem(IconModel item) {
+    _box.delete(item.url);
   }
 
   _insertItem(IconModel item) {
-    box.put(item.url, item);
+    _box.put(item.url, item);
   }
 }

@@ -8,6 +8,8 @@ class Constant {
   static String appBarTitle =  "Choose a food to cart";
   static String didSaveItemAlertTitle = "Congratulations !!";
   static String didSaveItemAlertMessage = "Item added to the shopping cart";
+  static String netWorkFailureMessage = "Please, verify your internet connection";
+  static String defaultErrorMessage = "something wrong";
 
   // SHOPPING_CART
   static String shoppingCartTitle =  "Shopping Cart";

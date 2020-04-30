@@ -3,7 +3,7 @@ import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 
 abstract class ShoppingCartRepository {
   clearItem(IconModel item);
-  List<IconModel> getShoppingList();
+  Future<List<IconModel>> getShoppingList();
 }
 
 class ShoppingCartRepositoryImpl extends ShoppingCartRepository {
@@ -17,7 +17,7 @@ class ShoppingCartRepositoryImpl extends ShoppingCartRepository {
   }
 
   @override
-  List<IconModel> getShoppingList() {
+  Future<List<IconModel>> getShoppingList() {
     return _localDataSource.findAll();
   }
 }

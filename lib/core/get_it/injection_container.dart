@@ -8,10 +8,9 @@ import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
 import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
+import 'package:hg_shopping_cart/pages/shopping_cart/data/repository/shopping_cart_repository.dart';
 import 'package:hg_shopping_cart/pages/shopping_cart/domain/usecase/shopping_cart_use_case.dart';
-import 'package:hg_shopping_cart/pages/shopping_cart/presentation/bloc/shopping_cart_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:hg_shopping_cart/pages/shopping_cart/data/repository/shooping_cart_repository.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -53,5 +52,4 @@ _injectToCore() {
 
 _injectToPresentationLayer() {
   locator.registerFactory(() => HomeBloc(locator()));
-  locator.registerFactory(() => ShoppingCartBloc(locator()));
 }

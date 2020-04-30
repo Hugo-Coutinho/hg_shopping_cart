@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hg_shopping_cart/core/util/widgets/loading.dart';
 
 class HomeLoadingWidget extends StatelessWidget {
   const HomeLoadingWidget({
@@ -7,11 +8,6 @@ class HomeLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height / 3,
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return Loading();
   }
 }
