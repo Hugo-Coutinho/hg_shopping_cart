@@ -22,7 +22,7 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<Failure, List<IconModel>>> getIcons(int page) async {
     try {
-      networkInfo.connectionCheck();
+      await networkInfo.connectionCheck();
       final serverResult = await remoteDataSource.getIcons(page);
       return Right(serverResult);
     } on NetworkException {

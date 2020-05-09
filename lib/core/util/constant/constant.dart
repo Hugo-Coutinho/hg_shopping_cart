@@ -1,15 +1,24 @@
 class Constant {
 
+  // ASSETS
+  static String baseAsset = "assets/lottie/";
+  static String networkErrorAsset = baseAsset + "network-error.json";
+  static String emptyAsset = baseAsset + "9091-empty-sad-shopping-bag.json";
+  static String failureAsset = baseAsset + "error-screen.json";
+
   // ROUTER
   static String homePage = "/";
   static String shoppingCartPage = "/ShoppingCartPage";
+
+  // MAIN
+  static String appTitle=  "Shopping cart";
 
   // HOME
   static String appBarTitle =  "Choose a food to cart";
   static String didSaveItemAlertTitle = "Congratulations !!";
   static String didSaveItemAlertMessage = "Item added to the shopping cart";
   static String netWorkFailureMessage = "Please, verify your internet connection";
-  static String defaultErrorMessage = "something wrong";
+  static String defaultErrorMessage = "Something wrong";
 
   // SHOPPING_CART
   static String shoppingCartTitle =  "Shopping Cart";
@@ -17,6 +26,7 @@ class Constant {
   // API
   static String token =  "";
   static final String authorization = "Authorization";
+  static final String applicationJson = "application/json";
   static final String bearer = "Bearer ";
   static final String baseUrl = "https://api.flaticon.com/v2";
   static final String authenticationUrl = baseUrl + "/app/authentication";

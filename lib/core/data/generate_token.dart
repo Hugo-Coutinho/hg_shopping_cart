@@ -19,7 +19,7 @@ class GenerateTokenImpl extends GenerateToken {
 
   Future<http.Response> _getIconsResponse() {
     return http.post(Uri.encodeFull(Constant.authenticationUrl), headers: {
-      "Accept": "application/json"
+      "Accept": Constant.applicationJson
     }, body: {
       "apikey": Constant.apiKey
     });

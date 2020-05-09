@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hg_shopping_cart/core/scoped_model/badge_scoped_model.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/shopping_cart/domain/usecase/shopping_cart_use_case.dart';
 import 'package:hg_shopping_cart/pages/shopping_cart/presentation/widgets/shopping_cart_Empty_widget.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ShoppingCartDefaultWidget extends StatefulWidget {
   final ShoppingCartUseCase _shoppingCartUseCase;
@@ -44,20 +46,25 @@ class _ShoppingCartDefaultWidgetState extends State<ShoppingCartDefaultWidget> {
     final currentItem = items[index];
     final amountOfItem = currentItem.amount;
 
-    return  new ListTile(
-      leading: new IconButton(
-        icon: Image.network(currentItem.url),
-        onPressed: null,
-      ),
-      title: new Text(currentItem.name),
-      subtitle: new Text("amount: " + "$amountOfItem"),
-      trailing: new IconButton(
-        icon: new Icon(Icons.clear),
-        onPressed: () {
-          _shoppingCartUseCase.clearItem(currentItem);
-          setState(() { });
-        },
-      ),
+    return ScopedModelDescendant<BadgeScopedModel>(
+        builder: (context, child, badge) {
+          return ListTile(
+            leading: IconButton(
+              icon: Image.network(currentItem.url),
+              onPressed: null,
+            ),
+            title: Text(currentItem.name),
+            subtitle: Text("amount: " + "$amountOfItem"),
+            trailing: IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () {
+                _shoppingCartUseCase.clearItem(currentItem);
+                badge.decrementAmountShoppingItems();
+                setState(() { });
+              },
+            ),
+          );
+        }
     );
   }
 }

@@ -15,9 +15,18 @@ class IconRemoteDataSourceImpl extends IconRemoteDataSource {
 
   @override
   Future<List<IconModel>> getIcons(int page) async {
-    final response = await _getIconsResponse(page);
-    final jsonIcons = response.statusCode == 200 ? _getIconsJsonData(response) : throw ServerException();
-    return _getIconModelsByJson(jsonIcons);
+    try {
+      _tokenValidation();
+      final response = await _getIconsResponse(page);
+      final jsonIcons = response.statusCode == 200 ? _getIconsJsonData(response) : throw ServerException();
+      return _getIconModelsByJson(jsonIcons);
+    } on ServerException {
+      throw ServerException();
+    }
+  }
+
+  _tokenValidation() {
+    return Constant.token.isEmpty ? throw ServerException() : "";
   }
 
   List<IconModel> _getIconModelsByJson(List<dynamic> jsonData) {

@@ -3,7 +3,7 @@ import 'package:hg_shopping_cart/core/error/exception.dart';
 
 abstract class NetworkInfo {
   Future<bool> get isConnected;
-  connectionCheck();
+  Future connectionCheck();
 }
 
 class NetworkInfoImpl implements NetworkInfo {
@@ -15,8 +15,9 @@ class NetworkInfoImpl implements NetworkInfo {
   Future<bool> get isConnected => connectionChecker.hasConnection;
 
   @override
-  connectionCheck() async {
+  Future connectionCheck() async {
     final connectionResult = await isConnected;
-    return connectionResult == true ? "" : throw NetworkException();
+    connectionResult == true ? Future.value() : Future.value(throw NetworkException());
+
   }
 }

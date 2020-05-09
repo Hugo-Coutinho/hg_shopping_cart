@@ -10,6 +10,8 @@ abstract class HomeState extends Equatable {
 
 class HomeLoadingState extends HomeState {}
 
+class HomeNetworkConnectionFailureState extends HomeState {}
+
 class HomeLoadedState extends HomeState {
   final List<IconEntity> items;
 

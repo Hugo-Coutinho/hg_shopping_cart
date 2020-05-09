@@ -28,7 +28,6 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
   void initState() {
     _items = widget.items;
     _stream.add(_items);
-//    _getThousandItems();
     super.initState();
   }
 
@@ -97,27 +96,5 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
     _items.where((currentItem) => currentItem.name.toLowerCase().contains(widget.filter.text.toLowerCase())).toList()
         : _items;
   }
-
-
-//  _getThousandItems() {
-//    final List<int> pages = [2, 3, 4, 5, 6, 7, 8, 9, 10];
-//    pages.forEach((currentPage) { _fetchItemsByPage(currentPage); });
-//  }
-//
-//  _fetchItemsByPage(int page) async {
-//    final fetchItems = await widget.homeBloc.fetchingItems(page);
-//    setState(() {
-//      print("inside setstate");
-//      fetchItems.fold(
-//            (failure) => failure,
-//            (items) => _addItemsToList(items),
-//      );
-//      _stream.add(_items);
-//    });
-//  }
-
-//  _addItemsToList(List<IconEntity> items) {
-//    items.forEach((element) =>  _items.map((itemMapped) => itemMapped.name.toLowerCase()).toList().contains(element.name.toLowerCase()) ? "" : _items.add(element) );
-//  }
 }
 

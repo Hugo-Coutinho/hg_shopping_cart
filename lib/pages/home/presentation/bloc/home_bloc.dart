@@ -25,9 +25,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<HomeState> _eitherLoadedOrErrorState(Either<Failure, List<IconEntity>> failureOrItems) async* {
     yield failureOrItems.fold(
-          (failure) => HomeErrorState(message: _mapFailureToMessage(failure)),
+          (failure) => _mapFailure(failure),
           (items) => HomeLoadedState(items: items),
     );
+  }
+
+  HomeState _mapFailure(Failure failure) {
+    return  failure is NetworkFailure ? HomeNetworkConnectionFailureState() : HomeErrorState(message: _mapFailureToMessage(failure));
   }
 
   String _mapFailureToMessage(Failure failure) {
