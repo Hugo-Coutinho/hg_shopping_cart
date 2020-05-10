@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -8,28 +7,19 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class HomeFindItemEvent extends HomeEvent {
-  final String itemName;
+class HomeDidLoadEvent extends HomeEvent {
+  bool _retry = false;
 
-  HomeFindItemEvent(this.itemName);
-
-  @override
-  List<Object> get props => [itemName];
-}
-
-class HomeDidSelectItemEvent extends HomeEvent {
-  final IconModel item;
-
-  HomeDidSelectItemEvent(this.item);
-
-  @override
-  List<Object> get props => [item];
-}
-
-class HomeToListItemsEvent extends HomeEvent {
-
-  HomeToListItemsEvent();
+  HomeDidLoadEvent();
 
   @override
   List<Object> get props => [];
+
+  retryLoad() {
+    _retry = true;
+  }
+
+  didHomeRetryConnection() {
+    return _retry;
+  }
 }

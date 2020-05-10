@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:hg_shopping_cart/core/data/generate_token.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
+import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
@@ -18,10 +20,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
-      yield HomeLoadingState();
-      final eitherFailureOrItems = await _homeUseCase.loadIcons(Constant.numberPage);
-      yield* _eitherLoadedOrErrorState(eitherFailureOrItems);
+    yield HomeLoadingState();
+    yield* (event is HomeDidLoadEvent) ? _mapDidLoadEventToState(event.didHomeRetryConnection()) : "";
   }
+
+  Stream<HomeState> _mapDidLoadEventToState(bool didRetryConnection) async* {
+    yield* didRetryConnection ? _retryGenerateTokenAndMapItemsToState() : _mapItemsToState();
+
+  }
+
+  Stream<HomeState> _retryGenerateTokenAndMapItemsToState() async* {
+    final eitherFailureOrItems = await _homeUseCase.retryLoadIcons(Constant.pageONe);
+    yield* _eitherLoadedOrErrorState(eitherFailureOrItems);
+  }
+
+  Stream<HomeState> _mapItemsToState() async* {
+    final eitherFailureOrItems = await _homeUseCase.loadIcons(Constant.pageONe);
+    yield* _eitherLoadedOrErrorState(eitherFailureOrItems);
+  }
+
 
   Stream<HomeState> _eitherLoadedOrErrorState(Either<Failure, List<IconEntity>> failureOrItems) async* {
     yield failureOrItems.fold(

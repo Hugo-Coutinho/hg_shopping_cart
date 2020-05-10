@@ -8,6 +8,7 @@ import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 
 abstract class HomeRepository {
   Future<Either<Failure, List<IconModel>>> getIcons(int page);
+  Future<Either<Failure, List<IconModel>>> retryGetIcons(int page);
   addItemToCart(IconModel item);
   Future<List<IconModel>> findAllFromLocalDataBase();
 }
@@ -20,17 +21,10 @@ class HomeRepositoryImpl implements HomeRepository {
   HomeRepositoryImpl(this.remoteDataSource, this.localDataSource, this.networkInfo);
 
   @override
-  Future<Either<Failure, List<IconModel>>> getIcons(int page) async {
-    try {
-      await networkInfo.connectionCheck();
-      final serverResult = await remoteDataSource.getIcons(page);
-      return Right(serverResult);
-    } on NetworkException {
-      return Left(NetworkFailure());
-    } on ServerException  {
-      return Left(ServerFailure());
-    }
-  }
+  Future<Either<Failure, List<IconModel>>> getIcons(int page) async => _getIconsFromRemote(remoteDataSource.getIcons(page));
+
+  @override
+  Future<Either<Failure, List<IconModel>>> retryGetIcons(int page) async => _getIconsFromRemote(remoteDataSource.retryGetIcons(page));
 
   @override
    addItemToCart(IconModel item) async {
@@ -41,4 +35,16 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<List<IconModel>> findAllFromLocalDataBase() {
     return localDataSource.findAll();
   }
-}
+
+  Future<Either<Failure, List<IconModel>>> _getIconsFromRemote(Future<List<IconModel>> fetchingIcons) async {
+    try {
+      await networkInfo.connectionCheck();
+      final serverResult = await fetchingIcons;
+      return Right(serverResult);
+    } on NetworkException {
+      return Left(NetworkFailure());
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+ }

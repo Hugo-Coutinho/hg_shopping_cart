@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
 
   BlocProvider<HomeBloc> buildBody(BuildContext context) {
     return BlocProvider(
-      create: (_) => _homeBloc..add(HomeToListItemsEvent()),
+      create: (_) => _homeBloc..add(HomeDidLoadEvent()),
       child: Center(
         child: Padding(
             padding: const EdgeInsets.all(10),

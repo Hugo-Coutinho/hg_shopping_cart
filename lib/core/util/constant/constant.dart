@@ -35,7 +35,7 @@ class Constant {
   static final String apiParametersColor = "color=2";
   static final String apiParametersPage = "page=";
   static final String getIconsUrl = baseUrl + "/items/icons?" + apiParametersCategoryId + "&" + apiParametersColor + "&" + apiParametersPage;
-  static final int numberPage = 1;
+  static final int pageONe = 1;
 
   // BOX
   static final String box = "icons";
