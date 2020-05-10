@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:hg_shopping_cart/core/data/generate_token.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
-import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';

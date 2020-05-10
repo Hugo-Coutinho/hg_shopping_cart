@@ -12,7 +12,7 @@ class HomeNetworkConnectionFailureWidget extends StatelessWidget {
       children: <Widget>[
         _connectionFailureAnimation(),
         SizedBox(height: 10),
-        _retryButton(context)
+        _retryConnectionButton(context)
       ],
     );
   }
@@ -26,11 +26,11 @@ class HomeNetworkConnectionFailureWidget extends StatelessWidget {
     );
   }
 
-  Widget _retryButton(BuildContext context) {
+  Widget _retryConnectionButton(BuildContext context) {
     final didLoadEvent = HomeDidLoadEvent();
 
     return RaisedButton(
-      child: Text("retry"),
+      child: Text(Constant.retryButtonTitle),
       elevation: 5.0,
       textColor: Colors.white,
       color: Colors.green,

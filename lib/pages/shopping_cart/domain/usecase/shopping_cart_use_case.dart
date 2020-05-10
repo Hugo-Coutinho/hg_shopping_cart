@@ -4,6 +4,7 @@ import 'package:hg_shopping_cart/pages/shopping_cart/data/repository/shopping_ca
 
 abstract class ShoppingCartUseCase {
   clearItem(IconEntity item);
+  clearAll();
   Future<List<IconEntity>> getShoppingList();
 }
 
@@ -20,5 +21,10 @@ ShoppingCartUseCaseImpl(this._repository);
   @override
   Future<List<IconEntity>> getShoppingList() {
     return _repository.getShoppingList();
+  }
+
+  @override
+  clearAll() {
+    _repository.clearAllFromDatabase();
   }
 }

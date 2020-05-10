@@ -19,9 +19,11 @@ class Constant {
   static String didSaveItemAlertMessage = "Item added to the shopping cart";
   static String netWorkFailureMessage = "Please, verify your internet connection";
   static String defaultErrorMessage = "Something wrong";
+  static String retryButtonTitle = "retry";
 
   // SHOPPING_CART
   static String shoppingCartTitle =  "Shopping Cart";
+  static String clearAllButtonTitle =  "Clear all";
 
   // API
   static String token =  "";

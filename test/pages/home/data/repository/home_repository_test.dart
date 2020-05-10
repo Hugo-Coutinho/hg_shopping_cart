@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:dev_test/dev_test.dart';
 import 'package:hg_shopping_cart/core/data/data_sources/icon_local_data_source.dart';
 import 'package:hg_shopping_cart/core/data/data_sources/icon_remote_data_source.dart';
 import 'package:hg_shopping_cart/core/error/exception.dart';
@@ -54,11 +54,11 @@ void main() {
           final Either<Failure, List<IconModel>> eitherResult = await homeRepository.getIcons(1);
 
           // assert
-          eitherResult.fold((failure) => expect(failure, throwsA(isAssertionError)),
+          eitherResult.fold((failure) => expect(failure, throwsA(AssertionTestFailure)),
                   (items) => expect(items, iconModelsFromJsonMap));
 
         } on ServerException {
-          throwsA(isAssertionError);
+          throwsA(AssertionTestFailure);
         }
       },
     );
@@ -75,7 +75,7 @@ void main() {
           await homeRepository.getIcons(1);
 
           // assert
-          throwsA(isAssertionError);
+          throwsA(AssertionTestFailure);
         } on Exception catch (e) {
           expect(e, ServerException);
         }

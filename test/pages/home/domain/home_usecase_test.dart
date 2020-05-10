@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:dev_test/test.dart';
+import 'package:hg_shopping_cart/core/error/exception.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
@@ -9,8 +10,7 @@ import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
 import 'package:mockito/mockito.dart';
 import '../../../fixtures/get_icons.dart';
 
-class MockHomeRepository extends Mock
-    implements HomeRepository {}
+class MockHomeRepository extends Mock implements HomeRepository {}
 
 void main() {
   HomeRepository repository;
@@ -41,7 +41,7 @@ void main() {
 
         // assert
         eitherResult.fold(
-                (failure) => expect(throwsA(isAssertionError), iconModelsFromJsonMap),
+                (failure) => expect(throwsA(AssertionTestFailure), iconModelsFromJsonMap),
                 (items) => expect(items, iconModelsFromJsonMap)
         );
       },
@@ -59,7 +59,7 @@ void main() {
         // assert
         eitherResult.fold(
                 (failure) => expect(failure, ServerFailure()),
-                (items) => expect(items, throwsA(isAssertionError))
+                (items) => expect(items, throwsA(AssertionTestFailure))
         );
       },
     );
