@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hg_shopping_cart/core/data/data_sources/icon_local_data_source.dart';
@@ -6,6 +8,7 @@ import 'package:hg_shopping_cart/core/data/generate_token.dart';
 import 'package:hg_shopping_cart/core/network/network_info.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
+import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
 import 'package:hg_shopping_cart/pages/shopping_cart/data/repository/shopping_cart_repository.dart';
@@ -51,5 +54,7 @@ _injectToCore() {
 }
 
 _injectToPresentationLayer() {
-  locator.registerFactory(() => HomeBloc(locator()));
+  locator.registerFactory(() => StreamController<List<IconEntity>>());
+  locator.registerFactory(() => List<IconEntity>());
+  locator.registerFactory(() => HomeBloc(locator(), locator(), locator()));
 }

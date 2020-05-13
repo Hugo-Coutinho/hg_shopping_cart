@@ -8,6 +8,7 @@ abstract class HomeUseCase {
   Future<Either<Failure, List<IconEntity>>> loadIcons(int page);
   Future<Either<Failure, List<IconEntity>>> retryLoadIcons(int page);
   Future<List<IconEntity>> amountItemShoppingCart();
+  List<IconEntity> getFilteredItems(String search, List<IconEntity> items);
 }
 
 class HomeUseCaseImpl extends HomeUseCase {
@@ -26,4 +27,11 @@ class HomeUseCaseImpl extends HomeUseCase {
 
   @override
   Future<Either<Failure, List<IconEntity>>> retryLoadIcons(int page) => repository.retryGetIcons(page);
+
+  @override
+  List<IconEntity> getFilteredItems(String search, List<IconEntity> items) {
+    return search.isNotEmpty ?
+    items.where((currentItem) => currentItem.name.toLowerCase().contains(search.toLowerCase())).toList()
+        : items;
+  }
 }

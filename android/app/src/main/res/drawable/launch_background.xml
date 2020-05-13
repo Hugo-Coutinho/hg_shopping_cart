@@ -4,11 +4,10 @@
     <item android:drawable="@android:color/white" />
 
     <!-- You can insert your own image assets here -->
-     <item>
-        <bitmap
-            android:layout_width="120dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:src="@drawable/hg_splash_screen" />
-    </item>
+        <item
+            android:left="70dp"
+            android:right="70dp"
+            android:top="150dp"
+            android:bottom="150dp"
+            android:drawable="@drawable/hg_splash_screen" />
 </layer-list>

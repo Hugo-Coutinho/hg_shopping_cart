@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
@@ -10,8 +11,14 @@ import 'package:dartz/dartz.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeUseCase _homeUseCase;
+  final StreamController<List<IconEntity>> _homeStream;
+  List<IconEntity> itemList;
 
-  HomeBloc(this._homeUseCase);
+  Sink<List<IconEntity>> get homeStreamInput => _homeStream.sink;
+  Stream<List<IconEntity>> get homeStreamOutput => _homeStream.stream;
+
+
+  HomeBloc(this._homeUseCase, this._homeStream, this.itemList);
 
   @override
   HomeState get initialState => HomeLoadingState();
@@ -41,7 +48,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Stream<HomeState> _eitherLoadedOrErrorState(Either<Failure, List<IconEntity>> failureOrItems) async* {
     yield failureOrItems.fold(
           (failure) => _mapFailure(failure),
-          (items) => HomeLoadedState(items: items),
+          (items) {
+            itemList += items;
+            homeStreamInput.add(items);
+            return HomeLoadedState(items: items);
+          },
     );
   }
 
@@ -68,5 +79,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<List<IconEntity>> getAmountShoppingCart() {
     return _homeUseCase.amountItemShoppingCart();
+  }
+
+  List<IconEntity> getFilteredItems(TextEditingController filter) {
+    return _homeUseCase.getFilteredItems(filter.text, itemList);
   }
 }

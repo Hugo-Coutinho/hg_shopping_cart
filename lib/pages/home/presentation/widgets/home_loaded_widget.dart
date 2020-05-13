@@ -1,19 +1,17 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hg_shopping_cart/core/scoped_model/badge_scoped_model.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
+import 'package:hg_shopping_cart/core/util/widgets/loading.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class HomeLoadedWidget extends StatefulWidget {
-
-  final List<IconEntity> items;
   final TextEditingController filter;
   final HomeBloc homeBloc;
 
-  HomeLoadedWidget(this.items, this.filter, this.homeBloc);
+  HomeLoadedWidget(this.filter, this.homeBloc);
 
   @override
   _HomeLoadedWidgetState createState() => _HomeLoadedWidgetState();
@@ -21,34 +19,24 @@ class HomeLoadedWidget extends StatefulWidget {
 
 class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
 
-  List<IconEntity> _items;
-  StreamController _stream = StreamController<List<IconEntity>>();
-
-  @override
-  void initState() {
-    _items = widget.items;
-    _stream.add(_items);
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _stream.stream,
+    return StreamBuilder<List<IconEntity>>(
+      stream: widget.homeBloc.homeStreamOutput,
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           return _buildGridView(context);
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         }
-        return Center(child: CircularProgressIndicator());
+        return Loading();
       },
     );
   }
 
   Widget _buildGridView(BuildContext context) {
     return GridView.builder(
-      itemCount: _getFilteredItems().length,
+      itemCount: widget.homeBloc.getFilteredItems(widget.filter).length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 16.0, mainAxisSpacing: 16.0),
       itemBuilder: (BuildContext context, int index) {
         return _buildGridViewItem(context, index);
@@ -57,7 +45,7 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
   }
 
   Widget _buildGridViewItem(BuildContext context, int index) {
-    final currentItem = _getFilteredItems()[index];
+    final currentItem = widget.homeBloc.getFilteredItems(widget.filter)[index];
 
     return ScopedModelDescendant<BadgeScopedModel>(
         builder: (context, child, badge) {
@@ -89,12 +77,6 @@ class _HomeLoadedWidgetState extends State<HomeLoadedWidget> {
           ],
         ),
     );
-  }
-
-  List<IconEntity> _getFilteredItems() {
-    return widget.filter.text.isNotEmpty ?
-    _items.where((currentItem) => currentItem.name.toLowerCase().contains(widget.filter.text.toLowerCase())).toList()
-        : _items;
   }
 }
 

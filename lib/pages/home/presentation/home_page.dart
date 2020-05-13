@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeBloc _homeBloc = locator<HomeBloc>();
-    final TextEditingController _filter = new TextEditingController();
+  final TextEditingController _filter = new TextEditingController();
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitleWidget = FittedBox(fit:BoxFit.fitWidth, child: Text(Constant.appBarTitle));
   Widget _appBarTitle = FittedBox(fit:BoxFit.fitWidth, child: Text(Constant.appBarTitle));
@@ -129,9 +129,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _mapWidgetByHomeCurrentState(HomeState state) {
+  Widget _mapWidgetByHomeCurrentState(HomeState state) {
     if (state is HomeLoadedState) {
-      return HomeLoadedWidget(state.items, _filter, _homeBloc);
+      return HomeLoadedWidget(_filter, _homeBloc);
     } else if (state is HomeErrorState) {
       return HomeWithErrorWidget(state.message);
     } else if (state is HomeNetworkConnectionFailureState) {

@@ -8,6 +8,7 @@ import 'package:hg_shopping_cart/core/error/exception.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
 import 'package:hg_shopping_cart/core/network/network_info.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
+import 'package:hg_shopping_cart/pages/home/data/model/serialization/icon_model_serialization/icon_model_serializable.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:mockito/mockito.dart';
@@ -37,7 +38,7 @@ void main() {
   List<IconEntity> _getIconsFromFixtures() {
     final Map<String, dynamic> jsonMap = json.decode(fixture('get_icons.json'));
     final jsonData = List<dynamic>.from(jsonMap['data']);
-    return jsonData.map((element) => IconModel.fromJson(element)).toList();
+    return jsonData.map((element) => IconModelSerializable.fromJson(element)).toList();
   }
 
   group('Testing either results from getIcons() method', () {

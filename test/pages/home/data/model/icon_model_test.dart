@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
+import 'package:hg_shopping_cart/pages/home/data/model/serialization/icon_model_serialization/icon_model_serializable.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:test/test.dart';
 import '../../../../fixtures/get_icons.dart';
@@ -20,7 +21,7 @@ void main() {
     final Map<String, dynamic> jsonMap = json.decode(fixture('get_icons.json'))['data'][0];
 
     // act
-    final result = IconModel.fromJson(jsonMap);
+    final result = IconModelSerializable.fromJson(jsonMap);
 
     // assert
     expect(modelExpected.name, result.name);

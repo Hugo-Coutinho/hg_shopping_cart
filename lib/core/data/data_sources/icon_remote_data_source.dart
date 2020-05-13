@@ -3,6 +3,7 @@ import 'package:hg_shopping_cart/core/error/exception.dart';
 import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
+import 'package:hg_shopping_cart/pages/home/data/model/serialization/icon_model_serialization/icon_model_serializable.dart';
 import 'package:http/http.dart' as http;
 
 import '../generate_token.dart';
@@ -40,7 +41,7 @@ class IconRemoteDataSourceImpl extends IconRemoteDataSource {
   }
 
   List<IconModel> _getIconModelsByJson(List<dynamic> jsonData) {
-    return jsonData.map((element) => IconModel.fromJson(element)).toList();
+    return jsonData.map((element) => IconModelSerializable.fromJson(element)).toList();
   }
 
   List<dynamic> _getIconsJsonData(http.Response response) {
