@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/scoped_model/badge_scoped_model.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/core/util/widgets/loading.dart';
@@ -11,12 +10,18 @@ import 'package:hg_shopping_cart/pages/shopping_cart/presentation/widgets/shoppi
 import 'package:scoped_model/scoped_model.dart';
 
 class ShoppingCartPage extends StatefulWidget {
+  final ShoppingCartUseCase _shoppingCartUseCase;
+
+  ShoppingCartPage(this._shoppingCartUseCase);
+
   @override
-  _ShoppingCartState createState() => _ShoppingCartState();
+  _ShoppingCartState createState() => _ShoppingCartState(this._shoppingCartUseCase);
 }
 
 class _ShoppingCartState extends State<ShoppingCartPage> {
-  final ShoppingCartUseCase _shoppingCartUseCase = locator<ShoppingCartUseCase>();
+  final ShoppingCartUseCase _shoppingCartUseCase;
+
+  _ShoppingCartState(this._shoppingCartUseCase);
 
   @override
   Widget build(BuildContext context) {

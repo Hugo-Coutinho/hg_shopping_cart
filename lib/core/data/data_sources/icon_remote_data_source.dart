@@ -14,9 +14,9 @@ abstract class IconRemoteDataSource {
 }
 
 class IconRemoteDataSourceImpl extends IconRemoteDataSource {
-  final http.Client client;
+  final http.Client _client;
 
-  IconRemoteDataSourceImpl(this.client);
+  IconRemoteDataSourceImpl(this._client);
 
   @override
   Future<List<IconModel>> getIcons(int page) async {
@@ -49,7 +49,7 @@ class IconRemoteDataSourceImpl extends IconRemoteDataSource {
   }
 
   Future<http.Response> _getIconsResponse(int page) {
-    return http.get(Uri.encodeFull(_prepareUrlPathByPage(page)),
+    return _client.get(Uri.encodeFull(_prepareUrlPathByPage(page)),
         headers: {Constant.authorization: Constant.token});
   }
 

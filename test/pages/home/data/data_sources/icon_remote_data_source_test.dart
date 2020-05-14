@@ -1,57 +1,47 @@
 import 'package:hg_shopping_cart/core/data/data_sources/icon_remote_data_source.dart';
-import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
 import 'package:test/test.dart';
-import '../../../../fixtures/get_icons.dart';
-import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
+import '../../../../core/mock_http_client.dart';
+import '../../../../core/mock_remote_data_source.dart';
 
-class MockHttpClient extends Mock implements http.Client {}
+main() {
+  IconRemoteDataSource _dataSource;
+  MockHttpClient _client;
+  MockRemoteDataSource _mockRemoteDataSource;
 
-void main() {
-  IconRemoteDataSource dataSource;
-  MockHttpClient mockHttpClient;
 
   setUp(() {
-    mockHttpClient = MockHttpClient();
-    dataSource = IconRemoteDataSourceImpl(mockHttpClient);
+    _client = MockHttpClient();
+    _mockRemoteDataSource = MockRemoteDataSource(_client);
+    _dataSource = IconRemoteDataSourceImpl(_client);
   });
-
-  void setUpMockHttpClientSuccess200() {
-    when(mockHttpClient.get(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response(fixture('trivia.json'), 200));
-  }
-
-  void setUpMockHttpClientFailure404() {
-    when(mockHttpClient.get(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response('Something went wrong', 404));
-  }
 
   test(
     'should return icons when the response code is 200 (success)',
-        () {
+        () async {
       // arrange
-      setUpMockHttpClientSuccess200();
-      final modelExpected = IconModel(url: 'https://image.flaticon.com/icons/png/512/174/174848.png', name: 'Facebook',amount: 1);
+      _mockRemoteDataSource.configureToMockToken();
+      _mockRemoteDataSource.setUpMockHttpClientSuccess200();
 
-      // act
-      dataSource.getIcons(1).then((result) {
+      try {
+        // act
+        final result = await _dataSource.getIcons(1);
         // assert
-        expect(modelExpected, result.first);
-      });
+        expect(result.length, equals(100));
+      } on Exception catch (e) {
+        fail(e.toString());
+      }
     },
   );
 
   test(
     'should return empty list when the response code is 404 or other',
-    () {
+        () {
       // arrange
-      setUpMockHttpClientFailure404();
+          _mockRemoteDataSource.setUpMockHttpClientFailure404();
 
-      // act
-      dataSource.getIcons(1).then((result) {
-        // assert
-        expect(0, result.asMap().length);
-      });
+        // act
+        //assert
+        expect(_dataSource.getIcons(1), throwsException);
     },
   );
 }

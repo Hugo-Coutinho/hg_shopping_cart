@@ -1,86 +1,116 @@
-import 'dart:convert';
+@TestOn('vm')
 
 import 'package:dartz/dartz.dart';
-import 'package:dev_test/dev_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:hg_shopping_cart/core/data/data_sources/icon_local_data_source.dart';
 import 'package:hg_shopping_cart/core/data/data_sources/icon_remote_data_source.dart';
 import 'package:hg_shopping_cart/core/error/exception.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
 import 'package:hg_shopping_cart/core/network/network_info.dart';
 import 'package:hg_shopping_cart/pages/home/data/model/icon_model.dart';
-import 'package:hg_shopping_cart/pages/home/data/model/serialization/icon_model_serialization/icon_model_serializable.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
-import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:mockito/mockito.dart';
-
-import '../../../../fixtures/get_icons.dart';
-
-class MockRemoteDataSource extends Mock implements IconRemoteDataSource {}
+import '../../../../core/mock_http_client.dart';
+import '../../../../core/mock_remote_data_source.dart';
 
 class MockLocalDataSource extends Mock implements IconLocalDataSource {}
 
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 void main() {
-  MockRemoteDataSource mockRemoteDataSource;
-  MockLocalDataSource mockLocalDataSource;
-  MockNetworkInfo mockNetworkInfo;
-  HomeRepository homeRepository;
+  IconRemoteDataSource _iconRemoteDataSource;
+  MockLocalDataSource _mockLocalDataSource;
+  MockNetworkInfo _mockNetworkInfo;
+  HomeRepository _homeRepository;
+  MockHttpClient _client;
+  MockRemoteDataSource _mockHttpClient;
 
   setUp(() {
-    mockRemoteDataSource = MockRemoteDataSource();
-    mockLocalDataSource = MockLocalDataSource();
-    mockNetworkInfo = MockNetworkInfo();
-    homeRepository = HomeRepositoryImpl(
-        mockRemoteDataSource, mockLocalDataSource, mockNetworkInfo);
+    _client = MockHttpClient();
+    _mockHttpClient = MockRemoteDataSource(_client);
+    _iconRemoteDataSource = IconRemoteDataSourceImpl(_client);
+    _mockLocalDataSource = MockLocalDataSource();
+    _mockNetworkInfo = MockNetworkInfo();
+    _homeRepository = HomeRepositoryImpl(_iconRemoteDataSource, _mockLocalDataSource, _mockNetworkInfo);
   });
 
-  List<IconEntity> _getIconsFromFixtures() {
-    final Map<String, dynamic> jsonMap = json.decode(fixture('get_icons.json'));
-    final jsonData = List<dynamic>.from(jsonMap['data']);
-    return jsonData.map((element) => IconModelSerializable.fromJson(element)).toList();
+  _networkOk() {
+    when(_mockNetworkInfo.connectionCheck()).thenAnswer((_) async => Future.value());
   }
 
-  group('Testing either results from getIcons() method', () {
+  _networkError() {
+    when(_mockNetworkInfo.connectionCheck()).thenAnswer((_) async => throw NetworkException());
+  }
+
     test(
       'Should get hundred icons',
-          () async {
-
+      () async {
         // arrange
-        final List<IconModel> iconModelsFromJsonMap = _getIconsFromFixtures();
-        when(mockRemoteDataSource.getIcons(1)).thenAnswer((_) async => iconModelsFromJsonMap);
+        _mockHttpClient.configureToMockToken();
+        _mockHttpClient.setUpMockHttpClientSuccess200();
+        _networkOk();
 
         try {
           // act
-          final Either<Failure, List<IconModel>> eitherResult = await homeRepository.getIcons(1);
+          final Either<Failure, List<IconModel>> eitherResult = await _homeRepository.getIcons(1);
 
           // assert
-          eitherResult.fold((failure) => expect(failure, throwsA(AssertionTestFailure)),
-                  (items) => expect(items, iconModelsFromJsonMap));
-
+          eitherResult.fold(
+              (failure) => expect(failure, throwsA(AssertionTestFailure)),
+              (items)  {
+                expect(items.length, equals(100));
+              },
+          );
         } on ServerException {
           throwsA(AssertionTestFailure);
         }
       },
     );
 
-    test(
-      'Should throw Service Failure',
-          () async {
+//  test(
+//    'Should get hundred icons by retry',
+//        () async {
+//
+//      // arrange
+//      setupLocator();
+//      _mockHttpClient.configureToMockToken();
+//      _mockHttpClient.setUpMockHttpClientSuccess200();
+//      _networkOk();
+//
+//      try {
+//        // act
+//        final Either<Failure, List<IconModel>> eitherResult = await _homeRepository.retryGetIcons(1);
+//
+//        // assert
+//        eitherResult.fold(
+//              (failure) => expect(failure, throwsA(AssertionTestFailure)),
+//              (items) {
+//            expect(items.length, equals(100));
+//          },
+//        );
+//      } on ServerException {
+//        throwsA(AssertionTestFailure);
+//      }
+//    },
+//  );
 
-        // arrange
-        when(mockRemoteDataSource.getIcons(1)).thenAnswer((_) async => throw ServerException());
+  test(
+      'test network connection, should return network failure',
+  () async {
+    _mockHttpClient.configureToMockToken();
+    _mockHttpClient.setUpMockHttpClientSuccess200();
+    _networkError();
 
-        try {
-          // act
-          await homeRepository.getIcons(1);
+    expect(await _homeRepository.getIcons(1), Left(NetworkFailure()));
 
-          // assert
-          throwsA(AssertionTestFailure);
-        } on Exception catch (e) {
-          expect(e, ServerException);
-        }
-      },
-    );
   });
+
+  test('should bring items from local database',
+      () async {
+        final modelExpected = IconModel( url: 'https://image.flaticon.com/icons/png/512/174/174848.png', name: 'Facebook', amount: 1);
+      when(_mockLocalDataSource.findAll()).thenAnswer((_) => Future.value([modelExpected]));
+
+      expect(await _homeRepository.findAllFromLocalDataBase(), [modelExpected]);
+      }
+  );
 }

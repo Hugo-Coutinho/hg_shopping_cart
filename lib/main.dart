@@ -11,7 +11,8 @@ import 'core/scoped_model/badge_scoped_model.dart';
 
 void main() async {
   _didApplicationLoad().whenComplete(() async {
-    runApp(MyApp());
+    final myApp = locator<ShoppingCartApp>();
+    runApp(myApp);
   });
 }
 
@@ -25,13 +26,15 @@ Future<void> _setupRemoteApiAccess() async {
   return await generateToken.syncToken();
 }
 
-class MyApp extends StatelessWidget {
-  final router = Router();
+class ShoppingCartApp extends StatelessWidget {
+  final Router router;
+
+  ShoppingCartApp(this.router);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: locator<HomeUseCase>().amountItemShoppingCart(),
+      future: locator<HomeUseCase>().getAllShoppingCartItems(),
       builder: (context, AsyncSnapshot<List<IconEntity>>snapshot) {
       return _buildMyApp(context, snapshot);
       },

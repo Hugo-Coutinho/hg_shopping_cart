@@ -78,10 +78,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<List<IconEntity>> getAmountShoppingCart() {
-    return _homeUseCase.amountItemShoppingCart();
+    return _homeUseCase.getAllShoppingCartItems();
   }
 
   List<IconEntity> getFilteredItems(TextEditingController filter) {
     return _homeUseCase.getFilteredItems(filter.text, itemList);
+  }
+
+  disposeLocalStorage() {
+    _homeUseCase.disposeLocalStorage();
+  }
+
+  disposeStream() {
+    _homeStream.close();
+    homeStreamInput.close();
   }
 }

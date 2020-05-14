@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hg_shopping_cart/core/get_it/injection_container.dart';
 import 'package:hg_shopping_cart/core/scoped_model/badge_scoped_model.dart';
 import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/presentation/bloc/home_bloc.dart';
@@ -13,19 +12,27 @@ import 'package:hg_shopping_cart/pages/home/presentation/widgets/home_with_error
 import 'package:scoped_model/scoped_model.dart';
 
 class HomePage extends StatefulWidget {
+  final HomeBloc _homeBloc;
+  final TextEditingController _filter;
+
+  HomePage(this._homeBloc, this._filter);
+
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState(this._homeBloc, this._filter);
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeBloc _homeBloc = locator<HomeBloc>();
-  final TextEditingController _filter = new TextEditingController();
-  Icon _searchIcon = new Icon(Icons.search);
-  Widget _appBarTitleWidget = FittedBox(fit:BoxFit.fitWidth, child: Text(Constant.appBarTitle));
-  Widget _appBarTitle = FittedBox(fit:BoxFit.fitWidth, child: Text(Constant.appBarTitle));
+  final HomeBloc _homeBloc;
+  final TextEditingController _filter;
+  Icon _searchIcon;
+  Widget _appBarTitleWidget;
+  Widget _appBarTitle;
 
+  _HomePageState(this._homeBloc, this._filter) {
+    _searchIcon = Icon(Icons.search);
+    _appBarTitle = FittedBox(fit:BoxFit.fitWidth, child: Text(Constant.appBarTitle));
+    _appBarTitleWidget = _appBarTitle;
 
-  _HomePageState() {
     _filter.addListener(() { setState(() {} ); });
   }
 
@@ -41,6 +48,8 @@ class _HomePageState extends State<HomePage> {
   @override
   dispose() {
     _filter.dispose();
+    _homeBloc.disposeLocalStorage();
+    _homeBloc.disposeStream();
     super.dispose();
   }
 

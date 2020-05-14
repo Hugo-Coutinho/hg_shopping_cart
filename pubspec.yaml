@@ -29,11 +29,12 @@ dependencies:
 dev_dependencies:
   flutter_launcher_icons: "^0.7.0"
   flutter_launcher_name: "^0.0.1"
-  test: any
-  dev_test: any
   mockito: ^4.1.1
   json_serializable: 3.3.0
   build_runner: 1.10.0
+  test: 1.14.3
+  flutter_test:
+    sdk: flutter
 
 flutter_launcher_name:
   name: "Cart"
@@ -43,12 +44,6 @@ flutter_icons:
   android: true
   image_path_ios: "assets/launcher/appLauncher.png"
   image_path_android: "assets/launcher/appLauncher.png"
-
-#flutter_test:
-#  sdk: flutter
-#  mockito: ^4.1.1
-##  hive_generator: ^0.7.0+2
-#  build_runner: ^1.9.0
 
 flutter:
   uses-material-design: true
