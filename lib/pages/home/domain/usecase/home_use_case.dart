@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:hg_shopping_cart/core/error/failure.dart';
+import 'package:hg_shopping_cart/core/logger/logger.dart';
 import 'package:hg_shopping_cart/pages/home/data/repository/home_repository.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 
@@ -14,6 +15,7 @@ abstract class HomeUseCase {
 
 class HomeUseCaseImpl extends HomeUseCase {
   final HomeRepository _repository;
+  final _log = getLogger('home_use_case');
 
   HomeUseCaseImpl(this._repository);
 
@@ -31,13 +33,17 @@ class HomeUseCaseImpl extends HomeUseCase {
 
   @override
   List<IconEntity> getFilteredItems(String search, List<IconEntity> items) {
-    return search.isNotEmpty ?
-    items.where((currentItem) => currentItem.name.toLowerCase().contains(search.toLowerCase())).toList()
-        : items;
+    if (search.isNotEmpty) {
+      _log.i('filtering stream items by user search -> $search');
+      return items.where((currentItem) => currentItem.name.toLowerCase().contains(search.toLowerCase())).toList();
+    } else {
+      return items;
+    }
   }
 
   @override
   disposeLocalStorage() {
+    _log.i('disposing local storage');
     _repository.disposeLocalStorage();
   }
 }

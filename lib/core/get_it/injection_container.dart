@@ -38,8 +38,8 @@ _injectToAppInitialization() {
 }
 
 _injectToDataSourceLayer() {
-  locator.registerLazySingleton<IconRemoteDataSource>(() => IconRemoteDataSourceImpl(locator()));
   locator.registerLazySingleton<GenerateToken>(() => GenerateTokenImpl(locator()));
+  locator.registerLazySingleton<IconRemoteDataSource>(() => IconRemoteDataSourceImpl(locator(), locator()));
   locator.registerLazySingleton<IconLocalDataSource>(() => IconLocalDataSourceImpl(boxName: Constant.box));
 }
 

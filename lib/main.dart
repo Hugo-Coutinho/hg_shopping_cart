@@ -6,8 +6,10 @@ import 'package:hg_shopping_cart/core/util/constant/constant.dart';
 import 'package:hg_shopping_cart/pages/home/domain/entity/icon_entity.dart';
 import 'package:hg_shopping_cart/pages/home/domain/usecase/home_use_case.dart';
 import 'package:scoped_model/scoped_model.dart';
-
+import 'core/logger/logger.dart';
 import 'core/scoped_model/badge_scoped_model.dart';
+
+final _mainLog = getLogger('main');
 
 void main() async {
   _didApplicationLoad().whenComplete(() async {
@@ -17,6 +19,7 @@ void main() async {
 }
 
 Future<void> _didApplicationLoad() async {
+  _mainLog.v('starting the application, doing the dependency injection and token generation');
   setupLocator();
   return await _setupRemoteApiAccess();
 }
@@ -42,6 +45,7 @@ class ShoppingCartApp extends StatelessWidget {
   }
 
   Widget _buildMyApp(BuildContext context, AsyncSnapshot<List<IconEntity>>snapshot) {
+    _mainLog.d('Building the app by item requests');
     if (snapshot.connectionState == ConnectionState.done) {
       final itemsTotal = snapshot.data.map((item) => item.amount).fold(0,(current, next) => current + next);
       return _buildApp(context, itemsTotal);

@@ -87,4 +87,13 @@ void main() {
         expect(await _homeUseCase.getAllShoppingCartItems(), [modelExpected]);
       }
   );
+
+  test('Should retry connection with success',
+        () {
+    final Future<Either<Failure, List<IconModel>>> answer = Future.value(Right([IconModel( url: 'https://image.flaticon.com/icons/png/512/174/174848.png', name: 'Facebook', amount: 1)]));
+      when(_homeRepository.retryGetIcons(1)).thenAnswer((_) => answer);
+
+      expect(_homeUseCase.retryLoadIcons(1), equals(answer));
+    },
+  );
 }
